@@ -10,6 +10,7 @@ on:
         required: true
         options:
           - alpine
+          - debian
       tag:
         type: string
         description: Image tag
@@ -35,7 +36,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: docker/images/build-kit
-          file: docker/images/build-kit/alpine.Dockerfile
+          file: docker/images/build-kit/${{ inputs.base-system }}.Dockerfile
           tags: ghcr.io/everest/build-kit-${{ inputs.base-system }}:${{ inputs.tag }}
           push: true
           cache-from: type=gha
