@@ -50,7 +50,7 @@ RUN apk add --no-cache \
 
 
 # install ev-cli
-RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@c7b3cc6#subdirectory=ev-dev-tools
+RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@246f250#subdirectory=ev-dev-tools
 
 # install everest-testing
 RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@c7b3cc6#subdirectory=everest-testing
