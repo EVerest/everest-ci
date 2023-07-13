@@ -48,6 +48,8 @@ RUN apk add --no-cache \
         # required by pybind11
         python3-dev
 
+RUN python3 -m pip install \
+    pydantic
 
 # install ev-cli
 RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.1#subdirectory=ev-dev-tools

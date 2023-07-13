@@ -47,6 +47,9 @@ RUN apt-get install --no-install-recommends -y \
 RUN apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+RUN python3 -m pip install \
+    pydantic
+
 # install ev-cli
 RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.1#subdirectory=ev-dev-tools
 
