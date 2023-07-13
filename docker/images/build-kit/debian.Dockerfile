@@ -48,13 +48,13 @@ RUN apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # install ev-cli
-RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@ebca0c6#subdirectory=ev-dev-tools
+RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.1#subdirectory=ev-dev-tools
 
 # install everest-testing
-RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@ebca0c6#subdirectory=everest-testing
+RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.1#subdirectory=everest-testing
 
 # install edm
-RUN python3 -m pip install git+https://github.com/EVerest/everest-dev-environment@dbf310f#subdirectory=dependency_manager
+RUN python3 -m pip install git+https://github.com/EVerest/everest-dev-environment@v0.5.4#subdirectory=dependency_manager
 
 # install everest-cmake
 RUN git clone https://github.com/EVerest/everest-cmake.git $EVEREST_CMAKE_PATH
