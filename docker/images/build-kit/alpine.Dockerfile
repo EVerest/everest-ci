@@ -48,15 +48,24 @@ RUN apk add --no-cache \
         # required by pybind11
         python3-dev
 
+RUN python3 -m pip install \
+    environs>=9.5.0 \
+    pydantic==1.* \
+    psutil>=5.9.1 \
+    cryptography>=3.4.6 \
+    aiofile>=3.7.4 \
+    py4j>=0.10.9.5 \
+    netifaces>=0.11.0 \
+    python-dateutil>=2.8.2
 
 # install ev-cli
-RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@ebca0c6#subdirectory=ev-dev-tools
+RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.2#subdirectory=ev-dev-tools
 
 # install everest-testing
-RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@ebca0c6#subdirectory=everest-testing
+RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.2#subdirectory=everest-testing
 
 # install edm
-RUN python3 -m pip install git+https://github.com/EVerest/everest-dev-environment@dbf310f#subdirectory=dependency_manager
+RUN python3 -m pip install git+https://github.com/EVerest/everest-dev-environment@v0.5.5#subdirectory=dependency_manager
 
 # install everest-cmake
 RUN git clone https://github.com/EVerest/everest-cmake.git $EVEREST_CMAKE_PATH
