@@ -16,7 +16,7 @@ inputs:
   color:
     description: 'Color output'
     required: true
-    default: 'always'greeted you'
+    default: 'always'
 runs:
   using: 'docker'
   image: 'docker://ghcr.io/everest/everest-clang-format:latest'
