@@ -1,0 +1,31 @@
+name: 'Lint directory'
+description: 'Lints a directory'
+inputs:
+  source-dir:
+    description: 'Directory to lint'
+    required: true
+    default: '.'
+  extensions:
+    description: 'File extensions to lint'
+    required: true
+    default: 'hpp,cpp'
+  exclude:
+    description: 'Directories to exclude'
+    required: true
+    default: 'cache'
+  color:
+    description: 'Color output'
+    required: true
+    default: 'always'greeted you'
+runs:
+  using: 'docker'
+  image: 'docker://ghcr.io/everest/everest-clang-format:latest'
+  args:
+    - /github/workspace/${{ inputs.source-dir }}
+    - --extensions
+    - ${{ inputs.extensions }}
+    - -e
+    - /github/workspace/${{ inputs.source-dir }}/${{ inputs.exclude }}
+    - --color
+    - ${{ inputs.color }}
+    - -r
