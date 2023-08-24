@@ -9,3 +9,5 @@ RUN wget -O /usr/bin/run-clang-format.py $RUN_CLANG_FORMAT_URL && \
 
 RUN wget -O  /usr/bin/clang-format $STATIC_CLANG_FORMAT_URL && \
     chmod a+x /usr/bin/clang-format
+
+ENTRYPOINT ["/usr/bin/run-clang-format.py"]
