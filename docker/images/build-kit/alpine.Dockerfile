@@ -59,10 +59,10 @@ RUN python3 -m pip install \
     python-dateutil>=2.8.2
 
 # install ev-cli
-RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.2#subdirectory=ev-dev-tools
+RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.4#subdirectory=ev-dev-tools
 
 # install everest-testing
-RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.2#subdirectory=everest-testing
+RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.4#subdirectory=everest-testing
 
 # install edm
 RUN python3 -m pip install git+https://github.com/EVerest/everest-dev-environment@v0.5.5#subdirectory=dependency_manager
