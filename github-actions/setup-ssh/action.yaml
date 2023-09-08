@@ -1,0 +1,18 @@
+name: Pull single file from a repository
+description: Pull single file from a repository
+inputs:
+  ssh-key:
+    description: 'SSH key'
+    required: true
+    type: string
+runs:
+  using: "composite"
+  steps:
+    - name: Setup ssh key and known_hosts
+      run: |
+        mkdir -p /root/.ssh
+        ssh-keyscan github.com >> /root/.ssh/known_hosts
+        echo "${{ inputs.ssh-key }}" > /root/.ssh/github_actions
+        chmod 600 /root/.ssh/github_actions
+        ssh-agent -a ${SSH_AUTH_SOCK} > /dev/null
+        ssh-add /root/.ssh/github_actions

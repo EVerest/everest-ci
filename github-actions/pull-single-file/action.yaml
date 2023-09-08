@@ -1,0 +1,76 @@
+name: Pull single file from a repository
+description: Pull single file from a repository
+inputs:
+  github_path:
+    description: '<owner>/<repo>/<path-to-file>@<ref>'
+    required: true
+    type: string
+  output_path:
+    description: 'Output path'
+    required: true
+    type: string
+outputs:
+  input_owner:
+    description: 'Owner of the input repository'
+    value: ${{ steps.extracted.outputs.owner }}
+  input_repo:
+    description: 'Repository got the input file from'
+    value: ${{ steps.extracted.outputs.repo }}
+  input_ref:
+    description: 'Ref of the repo got the input file from'
+    value: ${{ steps.extracted.outputs.ref }}
+  input_filename:
+    description: 'Filename of the input file'
+    value: ${{ steps.extracted.outputs.filename }}
+  input_directory:
+    description: 'Directory of the input file'
+    value: ${{ steps.extracted.outputs.directory }}
+  output_directory:
+    description: 'Directory of the output file'
+    value: ${{ steps.prepare-output.outputs.directory }}
+  output_filename:
+    description: 'Filename of the output file'
+    value: ${{ steps.prepare-output.outputs.filename }}
+runs:
+  using: "composite"
+  steps:
+    - name: extract owner, repo, ref and path
+      id: extracted
+      shell: python3 {0}
+      run: |
+        import os, pathlib
+        github_path = "${{ inputs.github_path }}"
+        owner, repo, path = github_path.split('/', 2)
+        path, ref = path.split('@', 1)
+        path = pathlib.Path(path)
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+          print(f'owner={owner}', file=f)
+          print(f'repo={repo}', file=f)
+          print(f'ref={ref}', file=f)
+          print(f'filename={ path.name }', file=f)
+          print(f'directory={ path.parent }', file=f)
+    - name: Prepare output path (file or directory)
+      id: prepare-output
+      shell: python3 {0}
+      run: |
+        import os, pathlib
+        directory = None
+        if "${{ inputs.output_path }}".endswith('/'):
+          directory = pathlib.Path("${{ inputs.output_path }}")
+          filename = "${{ steps.extracted.outputs.filename }}"
+        else:
+          directory = pathlib.Path("${{ inputs.output_path }}").parent
+          filename = pathlib.Path("${{ inputs.output_path }}").name
+        directory.mkdir(parents=True, exist_ok=True)
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+          print(f'directory={ directory.absolute() }', file=f)
+          print(f'filename={ filename }', file=f)
+    - name: Pull file
+      shell: bash
+      run: |
+        git clone -b ${{ steps.extracted.outputs.ref }} --depth=1 git@github.com:${{ steps.extracted.outputs.owner }}/${{ steps.extracted.outputs.repo }}.git tmp-repo
+        cd tmp-repo
+        git archive HEAD:${{ steps.extracted.outputs.directory }} ${{ steps.extracted.outputs.filename }} | tar -C ${{ steps.prepare-output.outputs.directory }} -xf -
+        cd ..
+        rm -rf tmp-repo
+        mv ${{ steps.prepare-output.outputs.directory }}/${{ steps.extracted.outputs.filename }} ${{ steps.prepare-output.outputs.directory }}/${{ steps.prepare-output.outputs.filename }}
