@@ -9,10 +9,13 @@ runs:
   using: "composite"
   steps:
     - name: Setup ssh key and known_hosts
+      shell: bash
+      env:
+        SSH_AUTH_SOCK: /tmp/ssh_agent.sock
       run: |
-        mkdir -p /root/.ssh
-        ssh-keyscan github.com >> /root/.ssh/known_hosts
-        echo "${{ inputs.ssh-key }}" > /root/.ssh/github_actions
-        chmod 600 /root/.ssh/github_actions
+        mkdir -p ~/.ssh
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+        echo "${{ inputs.ssh-key }}" > ~/.ssh/github_actions
+        chmod 600 ~/.ssh/github_actions
         ssh-agent -a ${SSH_AUTH_SOCK} > /dev/null
-        ssh-add /root/.ssh/github_actions
+        ssh-add ~/.ssh/github_actions
