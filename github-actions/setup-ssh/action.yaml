@@ -1,5 +1,5 @@
-name: Pull single file from a repository
-description: Pull single file from a repository
+name: Setup ssh key and known_hosts
+description: Setup ssh key and known_hosts
 inputs:
   ssh-key:
     description: 'SSH key'

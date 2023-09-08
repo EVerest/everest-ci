@@ -13,17 +13,24 @@ inputs:
     description: 'Output file location <path-to-output>'
     required: true
     type: string
+outputs:
+  output_file:
+    description: 'Output file location <path-to-output>'
+    value: ${{ steps.render-template.outputs.output_file }}
 runs:
   using: "composite"
   steps:
     - name: Render template
+      id: render-template
       shell: python3 {0}
       run: |
-        import jinja2
-        import yaml
+        import jinja2, yaml, pathlib, os
+        output_file = pathlib.Path('${{ inputs.output_file }}').absolute()
         with open('${{ inputs.data_file }}', 'r') as f:
           data = yaml.safe_load(f)
         with open('${{ inputs.template_file }}', 'r') as f:
           template = jinja2.Template(f.read())
-        with open('${{ inputs.output_file }}', 'w') as f:
+        with open(output_file, 'w') as f:
           f.write(template.render(data))
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+          f.write(f'output_file={ output_file }\n')
