@@ -1,0 +1,25 @@
+name: Testing custom actions
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  test-render-jinja2:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Create simple template with variable
+        run: |
+          echo "Hello {{ name }}" > template.j2
+      - name: Create data file
+        run: |
+          echo "name: world" > data.yaml
+      - name: Render template
+        uses: everest/everest-ci/github-actions/render-jinja2@feature/add-render-jinja2-action
+        with:
+          template_file: template.j2
+          data_file: data.yaml
+          output_file: output.txt
+      - name: Check output
+        run: |
+          cat output.txt
+          test "$(cat output.txt)" = "Hello world"        

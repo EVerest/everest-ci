@@ -1,0 +1,29 @@
+name: Render Jinja2 template
+description: Render Jinja2 template
+inputs:
+  template_file:
+    description: 'Template file location <path-to-template.j2>'
+    required: true
+    type: string
+  data_file:
+    description: 'Data file location <path-to-data.yaml>'
+    required: true
+    type: string
+  output_file:
+    description: 'Output file location <path-to-output>'
+    required: true
+    type: string
+runs:
+  using: "composite"
+  steps:
+    - name: Render template
+      shell: python3 {0}
+      run: |
+        import jinja2
+        import yaml
+        with open('${{ inputs.data_file }}', 'r') as f:
+          data = yaml.safe_load(f)
+        with open('${{ inputs.template_file }}', 'r') as f:
+          template = jinja2.Template(f.read())
+        with open('${{ inputs.output_file }}', 'w') as f:
+          f.write(template.render(data))
