@@ -44,11 +44,11 @@ runs:
         path, ref = path.split('@', 1)
         path = pathlib.Path(path)
         with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-          print(f'owner={owner}', file=f)
-          print(f'repo={repo}', file=f)
-          print(f'ref={ref}', file=f)
-          print(f'filename={ path.name }', file=f)
-          print(f'directory={ path.parent }', file=f)
+          f.write(f'owner={ owner }')
+          f.write(f'repo={ repo }')
+          f.write(f'ref={ ref }')
+          f.write(f'filename={ path.name }')
+          f.write(f'directory={ path.parent }')
     - name: Prepare output path (file or directory)
       id: prepare-output
       shell: python3 {0}
@@ -63,8 +63,8 @@ runs:
           filename = pathlib.Path("${{ inputs.output_path }}").name
         directory.mkdir(parents=True, exist_ok=True)
         with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-          print(f'directory={ directory.absolute() }', file=f)
-          print(f'filename={ filename }', file=f)
+          f.write(f'directory={ directory.absolute() }')
+          f.write(f'filename={ filename }')
     - name: Pull file
       shell: bash
       run: |
