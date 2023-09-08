@@ -9,17 +9,21 @@ inputs:
     description: 'SSH agent socket'
     required: true
     type: string
+  home-dir:
+    description: 'Home directory'
+    required: true
+    type: string
 runs:
   using: "composite"
   steps:
     - name: Setup ssh key and known_hosts
       shell: bash
       run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan github.com >> ~/.ssh/known_hosts
-        echo "${{ inputs.ssh-key }}" > ~/.ssh/github_actions
-        chmod 600 ~/.ssh/github_actions
+        mkdir -p ${{ inputs.home-dir }}/.ssh
+        ssh-keyscan github.com >> ${{ inputs.home-dir }}/.ssh/known_hosts
+        echo "${{ inputs.ssh-key }}" > ${{ inputs.home-dir }}/.ssh/github_actions
+        chmod 600 ${{ inputs.home-dir }}/.ssh/github_actions
         eval $(ssh-agent -a ${{ inputs.ssh-agent-socket }})
         echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> $GITHUB_ENV
         echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> $GITHUB_ENV
-        ssh-add ~/.ssh/github_actions
+        ssh-add ${{ inputs.home-dir }}/.ssh/github_actions
