@@ -50,7 +50,27 @@ jobs:
         run: |
           cat output.txt
           test "$(cat output.txt)" = "Hello world"
-  test-pull-single-file:
+  test-pull-single-file-1:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Create simple template with variable
+        run: |
+          echo "Hello {{ name }}" > template.j2
+      - name: Create data file
+        run: |
+          echo "name: world" > data.yaml
+      - name: Render template
+        #   LTODO: switch to main branch
+        uses: everest/everest-ci/github-actions/render-jinja2@feature/add-render-jinja2-action
+        with:
+          template_file: template.j2
+          data_file: data.yaml
+          output_file: output.txt
+      - name: Check output
+        run: |
+          cat output.txt
+          test "$(cat output.txt)" = "Hello world"
+  test-pull-single-file-2:
     runs-on: ubuntu-22.04
     steps:
       - name: Setup SSH
@@ -65,7 +85,7 @@ jobs:
         with:
           #   LTODO: switch to main branch
           github_path: everest/everest-ci/.github/workflows/test-github-actions.yaml@feature/add-render-jinja2-action
-          output_path: output.txt
+          output_path: .
       - name: Checkout everest-ci
         uses: actions/checkout@v2
         with:
@@ -89,17 +109,17 @@ jobs:
           echo "output_directory: ${{ steps.pull-single-file.outputs.output_directory }}"
           test "${{ steps.pull-single-file.outputs.output_directory }}" = "$(pwd)"
           echo "output_filename: ${{ steps.pull-single-file.outputs.output_filename }}"
-          test "${{ steps.pull-single-file.outputs.output_filename }}" = "output.txt"
+          test "${{ steps.pull-single-file.outputs.output_filename }}" = "test-github-actions.yaml"
       - name: Check output file
         run: |
-          cat output.txt
-          test "$(cat output.txt)" = "$(cat everest-ci/.github/workflows/test-github-actions.yaml)"  
-  test-configure-ssh:
+          cat ${{ steps.pull-single-file.outputs.output_filename }}
+          test "$(cat ${{ steps.pull-single-file.outputs.output_filename }})" = "$(cat everest-ci/.github/workflows/test-github-actions.yaml)"  
+  test-configure-git:
     runs-on: ubuntu-22.04
     steps:
-      - name: Configure SSH
+      - name: Configure Git
         #   LTODO: switch to main branch
-        uses: everest/everest-ci/github-actions/configure-ssh@feature/add-render-jinja2-action
+        uses: everest/everest-ci/github-actions/configure-git@feature/add-render-jinja2-action
         with:
           email: compiler@pionix.de
           name: Github Service Account

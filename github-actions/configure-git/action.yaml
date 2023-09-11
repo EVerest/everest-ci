@@ -1,5 +1,5 @@
-name: Configure ssh email and name
-description: Configure ssh email and name
+name: Configure git email and name
+description: Configure git email and name
 inputs:
   email:
     description: 'Email'

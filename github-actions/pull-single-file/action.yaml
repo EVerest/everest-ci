@@ -55,12 +55,13 @@ runs:
       run: |
         import os, pathlib
         directory = None
-        if "${{ inputs.output_path }}".endswith('/'):
-          directory = pathlib.Path("${{ inputs.output_path }}")
+        output_path = "${{ inputs.output_path }}"
+        if output_path.endswith('/') or output_path == '.' or output_path == '..':
+          directory = pathlib.Path(output_path)
           filename = "${{ steps.extracted.outputs.filename }}"
         else:
-          directory = pathlib.Path("${{ inputs.output_path }}").parent
-          filename = pathlib.Path("${{ inputs.output_path }}").name
+          directory = pathlib.Path(output_path).parent
+          filename = pathlib.Path(output_path).name
         directory.mkdir(parents=True, exist_ok=True)
         with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
           f.write(f'directory={ directory.absolute() }\n')
@@ -73,4 +74,14 @@ runs:
         git archive HEAD:${{ steps.extracted.outputs.directory }} ${{ steps.extracted.outputs.filename }} | tar -C ${{ steps.prepare-output.outputs.directory }} -xf -
         cd ..
         rm -rf tmp-repo
-        mv ${{ steps.prepare-output.outputs.directory }}/${{ steps.extracted.outputs.filename }} ${{ steps.prepare-output.outputs.directory }}/${{ steps.prepare-output.outputs.filename }}
+    - name: Rename file if necessary
+      shell: bash
+      run: |
+        directory="${{ steps.prepare-output.outputs.directory }}"
+        source="$directory/${{ steps.extracted.outputs.filename }}"
+        target="$directory/${{ steps.prepare-output.outputs.filename }}"
+        if test "$source" = "$target"; then
+          echo "File $source is already named $target"
+        else
+          mv $source $target
+        fi
