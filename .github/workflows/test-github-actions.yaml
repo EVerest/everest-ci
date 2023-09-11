@@ -128,3 +128,51 @@ jobs:
           git config --list --global
           test "$(git config --get user.email)" = "compiler@pionix.de"
           test "$(git config --get user.name)" = "Github Service Account"
+  test-find-issue-comment:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Find issue comment
+        #   LTODO: switch to main branch
+        uses: everest/everest-ci/github-actions/find-issue-comment@feature/add-render-jinja2-action
+        id: find-issue-comment
+        with:
+          owner: everest
+          repo: everest
+          token: ${{ secrets.SA_GITHUB_PAT }}
+          issue_number: 98
+          user: pionix-compiler
+  test-update-issue-comment:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Find issue comment
+        #   LTODO: switch to main branch
+        uses: everest/everest-ci/github-actions/find-issue-comment@feature/add-render-jinja2-action
+        id: find-issue-comment
+        with:
+          owner: everest
+          repo: everest
+          token: ${{ secrets.SA_GITHUB_PAT }}
+          issue_number: 98
+          user: pionix-compiler
+      - name: Update issue comment
+        #   LTODO: switch to main branch
+        uses: everest/everest-ci/github-actions/update-issue-comment@feature/add-render-jinja2-action
+        with:
+          owner: everest
+          repo: everest
+          token: ${{ secrets.SA_GITHUB_PAT }}
+          comment_id: ${{ steps.find-issue-comment.outputs.comment_id }}
+          body: "Hello World 2"
+  # test-create-issue-comment:
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - name: Create issue comment
+  #       #   LTODO: switch to main branch
+  #       uses: everest/everest-ci/github-actions/create-issue-comment@feature/add-render-jinja2-action
+  #       id: create-issue-comment
+  #       with:
+  #         owner: everest
+  #         repo: everest
+  #         token: ${{ secrets.SA_GITHUB_PAT }}
+  #         issue_number: 98
+  #         body: "Hello World"

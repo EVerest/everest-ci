@@ -1,0 +1,66 @@
+name: Find issue comment by user
+description: Find issue comment by user
+inputs:
+  owner:
+    description: 'Owner'
+    required: true
+    type: string
+  repo:
+    description: 'Repo'
+    required: true
+    type: string
+  issue_number:
+    description: 'Issue number'
+    required: true
+    type: int
+  token:
+    description: 'Token'
+    required: true
+    type: string
+  user:
+    description: 'User'
+    required: true
+    type: string
+outputs:
+  comment_id:
+    description: 'Comment id'
+    value: ${{ steps.find-comment.outputs.comment_id }}
+  success:
+    description: 'Success'
+    value: ${{ steps.find-comment.outputs.success }}
+runs:
+  using: "composite"
+  steps:
+    - name: Get all comments
+      shell: bash
+      run: |
+        curl -L \
+          -o "output.json" \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ inputs.token }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/${{ inputs.owner }}/${{ inputs.repo }}/issues/${{ inputs.issue_number }}/comments
+      id: comments
+    - name: Find comment
+      id: find-comment
+      shell: python3 {0}
+      run: |
+        import json, os
+        comment_id = None
+        success = "False"
+        with open('output.json') as f:
+          comments = json.load(f)
+        for comment in comments:
+          if comment['user']['login'] == "${{ inputs.user }}":
+            if comment_id is not None:
+              raise Exception(f"Found multiple comments by user ${{ inputs.user }}")
+            comment_id = comment['id']
+            success = "True"
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+          f.write(f'comment_id={ comment_id }\n')
+          f.write(f'success={ success }\n')
+    - name: Result
+      shell: bash
+      run: |
+        echo "comment_id: ${{ steps.find-comment.outputs.comment_id }}"
+        echo "success: ${{ steps.find-comment.outputs.success }}"

@@ -1,0 +1,36 @@
+name: Update issue comment
+description: Update issue comment
+inputs:
+  owner:
+    description: 'Owner'
+    required: true
+    type: string
+  repo:
+    description: 'Repo'
+    required: true
+    type: string
+  token:
+    description: 'Token'
+    required: true
+    type: string
+  comment_id:
+    description: 'Comment id'
+    required: true
+    type: int
+  body:
+    description: 'Body'
+    required: true
+    type: string
+runs:
+  using: "composite"
+  steps:
+    - name: Update issue
+      shell: bash
+      run: |
+        curl -L \
+          -X PATCH \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ inputs.token }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/${{ inputs.owner }}/${{ inputs.repo }}/issues/comments/${{ inputs.comment_id }} \
+          -d '{"body":"${{ inputs.body }}"}'
