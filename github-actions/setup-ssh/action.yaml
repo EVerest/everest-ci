@@ -5,25 +5,38 @@ inputs:
     description: 'SSH key'
     required: true
     type: string
-  ssh-agent-socket:
-    description: 'SSH agent socket'
-    required: true
-    type: string
-  home-dir:
+  home-directory:
     description: 'Home directory'
-    required: true
+    default: /home/runner
+    type: string
+  known-hosts:
+    description: 'Known hosts'
+    required: false
     type: string
 runs:
   using: "composite"
   steps:
-    - name: Setup ssh key and known_hosts
+    - name: Prepare directory
       shell: bash
       run: |
-        mkdir -p ${{ inputs.home-dir }}/.ssh
-        ssh-keyscan github.com >> ${{ inputs.home-dir }}/.ssh/known_hosts
-        echo "${{ inputs.ssh-key }}" > ${{ inputs.home-dir }}/.ssh/github_actions
-        chmod 600 ${{ inputs.home-dir }}/.ssh/github_actions
-        eval $(ssh-agent -a ${{ inputs.ssh-agent-socket }})
+        mkdir -p ${{ inputs.home-directory }}/.ssh
+    - name: Add known hosts
+      shell: python3 {0}
+      run: |
+        import os
+        known_hosts = "${{ inputs.known-hosts }}"
+        known_hosts = known_hosts.split(',')
+        for host in known_hosts:
+          if host != "":
+            os.system(f"ssh-keyscan {host} >> ${{ inputs.home-directory }}/.ssh/known_hosts")
+    - name: Setup ssh key and known_hosts
+      shell: bash
+      # LTODO: don't use file for key
+      run: |
+        echo "${{ inputs.ssh-key }}" > ssh-add -
+        # echo "${{ inputs.ssh-key }}" > ${{ inputs.home-directory }}/.ssh/github_actions
+        # chmod 600 ${{ inputs.home-directory }}/.ssh/github_actions
+        # eval $(ssh-agent)
+        # ssh-add ${{ inputs.home-directory }}/.ssh/github_actions
         echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> $GITHUB_ENV
         echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> $GITHUB_ENV
-        ssh-add ${{ inputs.home-dir }}/.ssh/github_actions

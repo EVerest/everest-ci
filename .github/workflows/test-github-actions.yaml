@@ -12,6 +12,21 @@ jobs:
         uses: everest/everest-ci/github-actions/setup-ssh@feature/add-render-jinja2-action
         with:
           ssh-key: ${{ secrets.SA_GITHUB_SSH_KEY }}
+          known-hosts: github.com
+      - name: Check ssh key
+        run: |
+          ssh -T git@github.com || test $? = 1
+  test-setup-ssh-in-container:
+    runs-on: ubuntu-22.04
+    container: ghcr.io/everest/everest-ci-env:latest
+    steps:
+      - name: Setup ssh key and known_hosts
+        #   LTODO: switch to main branch
+        uses: everest/everest-ci/github-actions/setup-ssh@feature/add-render-jinja2-action
+        with:
+          ssh-key: ${{ secrets.SA_GITHUB_SSH_KEY }}
+          known-hosts: github.com
+          home-directory: /root
       - name: Check ssh key
         run: |
           ssh -T git@github.com || test $? = 1
