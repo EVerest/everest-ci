@@ -31,12 +31,8 @@ runs:
             os.system(f"ssh-keyscan {host} >> ${{ inputs.home-directory }}/.ssh/known_hosts")
     - name: Setup ssh key and known_hosts
       shell: bash
-      # LTODO: don't use file for key
       run: |
-        echo "${{ inputs.ssh-key }}" > ssh-add -
-        # echo "${{ inputs.ssh-key }}" > ${{ inputs.home-directory }}/.ssh/github_actions
-        # chmod 600 ${{ inputs.home-directory }}/.ssh/github_actions
-        # eval $(ssh-agent)
-        # ssh-add ${{ inputs.home-directory }}/.ssh/github_actions
+        eval $(ssh-agent)
+        echo "${{ inputs.ssh-key }}" | ssh-add -
         echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> $GITHUB_ENV
         echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> $GITHUB_ENV
