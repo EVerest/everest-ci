@@ -94,3 +94,17 @@ jobs:
         run: |
           cat output.txt
           test "$(cat output.txt)" = "$(cat everest-ci/.github/workflows/test-github-actions.yaml)"  
+  test-configure-ssh:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Configure SSH
+        #   LTODO: switch to main branch
+        uses: everest/everest-ci/github-actions/configure-ssh@feature/add-render-jinja2-action
+        with:
+          email: compiler@pionix.de
+          name: Github Service Account
+      - name: Test
+        run: |
+          git config --list --global
+          test "$(git config --get user.email)" = "compiler@pionix.de"
+          test "$(git config --get user.name)" = "Github Service Account"

@@ -1,0 +1,22 @@
+name: Configure ssh email and name
+description: Configure ssh email and name
+inputs:
+  email:
+    description: 'Email'
+    required: true
+    type: string
+  name:
+    description: 'Name'
+    required: true
+    type: string
+runs:
+  using: "composite"
+  steps:
+    - name: Configure email
+      shell: bash
+      run: |
+        git config --global user.email "${{ inputs.email }}"
+    - name: Configure name
+      shell: bash
+      run: |
+        git config --global user.name "${{ inputs.name }}"
