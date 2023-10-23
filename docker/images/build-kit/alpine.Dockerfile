@@ -47,7 +47,9 @@ RUN apk add --no-cache \
         # required by RiseV2G
         maven \
         # required by pybind11
-        python3-dev
+        python3-dev \
+	# required for certificate generation
+	openssl
 
 RUN python3 -m pip install \
     environs>=9.5.0 \
