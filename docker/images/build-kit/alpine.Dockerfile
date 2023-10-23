@@ -10,6 +10,7 @@ RUN apk update && \
         git \
         curl \
         rsync \
+	bash \
         # build tools
         samurai \
         make \
