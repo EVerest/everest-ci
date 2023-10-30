@@ -62,7 +62,7 @@ RUN python3 -m pip install \
     python-dateutil>=2.8.2
 
 # install ev-cli
-RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.4#subdirectory=ev-dev-tools
+RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@e999572d08896ebdc116cf33e0e85cd9aa3ac589#subdirectory=ev-dev-tools
 
 # install everest-testing
 RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.4#subdirectory=everest-testing
