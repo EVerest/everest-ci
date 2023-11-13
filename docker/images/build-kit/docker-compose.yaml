@@ -1,0 +1,9 @@
+services:
+  alpine:
+    build:
+      context: .
+      dockerfile: alpine.Dockerfile
+  debian:
+    build:
+      context: .
+      dockerfile: debian.Dockerfile
