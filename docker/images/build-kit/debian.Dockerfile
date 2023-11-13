@@ -1,8 +1,13 @@
 # syntax=docker/dockerfile:1
 FROM debian:11.7-slim
+#FROM ubuntu:20.04
 
 ARG EXT_MOUNT=/ext
 ARG EVEREST_CMAKE_PATH=/usr/lib/cmake/everest-cmake
+
+# For non-interactive installation of `tzdata` package. See https://serverfault.com/questions/949991/how-to-install-tzdata-on-a-ubuntu-docker-image
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
@@ -21,7 +26,7 @@ RUN apt-get update \
         # common dev libraries
         #linux-headers \
         # compiler tools
-        clang-tidy-13 \
+        clang-tidy \
         ccache \
         # python3 support
         python3-pip
