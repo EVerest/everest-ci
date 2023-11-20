@@ -61,7 +61,7 @@ RUN python3 -m pip install \
 RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@b862a940afa37a99350483fd550e88acaff3e9a7#subdirectory=ev-dev-tools
 
 # install everest-testing
-RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.4#subdirectory=everest-testing
+RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.6#subdirectory=everest-testing
 
 # install edm
 RUN python3 -m pip install git+https://github.com/EVerest/everest-dev-environment@v0.5.5#subdirectory=dependency_manager
