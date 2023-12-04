@@ -29,9 +29,7 @@ RUN apk update && \
         py3-pip \
         # required for testing
         gtest \
-        googletest \
-        gtest-dev \
-        googletest-dev
+        gtest-dev
 
 # additional packages
 RUN apk add --no-cache \
