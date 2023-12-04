@@ -26,7 +26,8 @@ RUN apt-get update \
         # python3 support
         python3-pip \
         # required for testing
-        libgtest-dev
+        libgtest-dev \
+        lcov
 
 # additional packages
 RUN apt-get install --no-install-recommends -y \
@@ -57,7 +58,8 @@ RUN python3 -m pip install \
     aiofile>=3.7.4 \
     py4j>=0.10.9.5 \
     netifaces>=0.11.0 \
-    python-dateutil>=2.8.2
+    python-dateutil>=2.8.2 \
+    gcovr==5.0
 
 # install ev-cli
 RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@53c5fdf#subdirectory=ev-dev-tools

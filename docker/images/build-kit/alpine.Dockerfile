@@ -5,7 +5,7 @@ ARG EXT_MOUNT=/ext
 ARG EVEREST_CMAKE_PATH=/usr/lib/cmake/everest-cmake
 
 # Add edge/testing repository to enable installation of lcov
-RUN echo http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
+RUN echo https://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
 
 RUN apk update && \
     apk add --no-cache \
@@ -67,7 +67,7 @@ RUN python3 -m pip install \
     py4j>=0.10.9.5 \
     netifaces>=0.11.0 \
     python-dateutil>=2.8.2 \
-    gcovr==5.0 
+    gcovr==5.0
 
 # install ev-cli
 RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@53c5fdf#subdirectory=ev-dev-tools
