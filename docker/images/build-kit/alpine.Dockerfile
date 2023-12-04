@@ -26,7 +26,9 @@ RUN apk update && \
         clang-extra-tools \
         ccache \
         # python3 support
-        py3-pip
+        py3-pip \
+        # required for testing
+        gtest
 
 # additional packages
 RUN apk add --no-cache \

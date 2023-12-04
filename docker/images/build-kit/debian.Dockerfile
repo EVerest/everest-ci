@@ -24,7 +24,9 @@ RUN apt-get update \
         clang-tidy-13 \
         ccache \
         # python3 support
-        python3-pip
+        python3-pip \
+        # required for testing
+        libgtest-dev
 
 # additional packages
 RUN apt-get install --no-install-recommends -y \
