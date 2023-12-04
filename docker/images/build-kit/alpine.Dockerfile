@@ -4,6 +4,9 @@ FROM alpine:3.17
 ARG EXT_MOUNT=/ext
 ARG EVEREST_CMAKE_PATH=/usr/lib/cmake/everest-cmake
 
+# Add edge/testing repository to enable installation of lcov
+RUN echo http://nl.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
+
 RUN apk update && \
     apk add --no-cache \
         # basic command line tools
