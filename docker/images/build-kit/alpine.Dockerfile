@@ -70,7 +70,7 @@ RUN python3 -m pip install \
     gcovr==5.0
 
 # install ev-cli
-RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@53c5fdf#subdirectory=ev-dev-tools
+RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@4a5ce956722929325cef3c2d73a8919c6d2e4013#subdirectory=ev-dev-tools
 
 # install everest-testing
 RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.6#subdirectory=everest-testing
