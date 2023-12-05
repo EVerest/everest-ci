@@ -4,6 +4,9 @@ FROM alpine:3.17
 ARG EXT_MOUNT=/ext
 ARG EVEREST_CMAKE_PATH=/usr/lib/cmake/everest-cmake
 
+# Add edge/testing repository to enable installation of lcov
+RUN echo https://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
+
 RUN apk update && \
     apk add --no-cache \
         # basic command line tools
@@ -26,7 +29,11 @@ RUN apk update && \
         clang-extra-tools \
         ccache \
         # python3 support
-        py3-pip
+        py3-pip \
+        # required for testing
+        gtest-dev \
+        lcov
+
 
 # additional packages
 RUN apk add --no-cache \
@@ -59,10 +66,11 @@ RUN python3 -m pip install \
     aiofile>=3.7.4 \
     py4j>=0.10.9.5 \
     netifaces>=0.11.0 \
-    python-dateutil>=2.8.2
+    python-dateutil>=2.8.2 \
+    gcovr==5.0
 
 # install ev-cli
-RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@b862a940afa37a99350483fd550e88acaff3e9a7#subdirectory=ev-dev-tools
+RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@4a5ce956722929325cef3c2d73a8919c6d2e4013#subdirectory=ev-dev-tools
 
 # install everest-testing
 RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.6#subdirectory=everest-testing

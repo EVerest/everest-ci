@@ -24,7 +24,10 @@ RUN apt-get update \
         clang-tidy-13 \
         ccache \
         # python3 support
-        python3-pip
+        python3-pip \
+        # required for testing
+        libgtest-dev \
+        lcov
 
 # additional packages
 RUN apt-get install --no-install-recommends -y \
@@ -55,10 +58,11 @@ RUN python3 -m pip install \
     aiofile>=3.7.4 \
     py4j>=0.10.9.5 \
     netifaces>=0.11.0 \
-    python-dateutil>=2.8.2
+    python-dateutil>=2.8.2 \
+    gcovr==5.0
 
 # install ev-cli
-RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@b862a940afa37a99350483fd550e88acaff3e9a7#subdirectory=ev-dev-tools
+RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@4a5ce956722929325cef3c2d73a8919c6d2e4013#subdirectory=ev-dev-tools
 
 # install everest-testing
 RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@v0.1.6#subdirectory=everest-testing
