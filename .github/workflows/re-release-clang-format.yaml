@@ -1,0 +1,45 @@
+name: Re-release clang-format binary
+on:
+  workflow_dispatch:
+    inputs:
+      release-tag:
+        description: 'Version to release'
+        required: true
+        default: 'llvmorg-15.0.6'
+      release-title:
+        description: 'Release title'
+        required: true
+jobs:
+  re-release-llvm:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Create assets directory
+        run: |
+          mkdir -p assets
+      - name: Download llvm release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: assets
+        run: |
+          gh release -R llvm/llvm-project download ${{ inputs.release-tag }} --pattern 'clang+llvm-*'
+      - name: Extract clang-format binary
+        working-directory: assets
+        run: |
+          ls *.tar.xz | xargs -I {} -P $(nproc) bash -c '
+              file="{}"
+              name=$(echo $file | sed -e "s/.tar.xz//")
+              tar --extract --file $file $name/bin/clang-format
+              mv $name/bin/clang-format clang-format-$name
+              rm -rf $name
+          '
+      - name: Get llvm release url
+        id: get-release-info
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "url=$(gh release -R llvm/llvm-project view ${{ inputs.release-tag }} --json url | jq -r '.url')" >> $GITHUB_OUTPUT
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release -R ${{ github.repository }} create ${{ inputs.release-tag }} assets/* --title "${{ inputs.release-title }}" --notes "See [LLVM release notes](${{ steps.get-release-info.outputs.url }}). licensed as Apache 2.0 https://github.com/llvm/llvm-project/blob/main/LICENSE.TXT"

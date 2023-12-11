@@ -27,7 +27,14 @@ RUN apt-get update \
         python3-pip \
         # required for testing
         libgtest-dev \
-        lcov
+        lcov \
+        # required by cryptography
+        libffi-dev \
+        rustc \
+        cargo \
+        # required by gcovr
+        libxml2-dev \
+        libxslt1-dev
 
 # additional packages
 RUN apt-get install --no-install-recommends -y \
@@ -45,10 +52,6 @@ RUN apt-get install --no-install-recommends -y \
         libpcap-dev \
         # required by RiseV2G
         maven
-
-# clean up apt
-RUN apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m pip install \
     environs>=9.5.0 \

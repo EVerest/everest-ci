@@ -1,0 +1,61 @@
+name: Build and push docker images hosted on everest-ci
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_build:
+        description: 'Force build even if no changes are detected'
+        required: false
+        type: boolean
+  push:
+    branches:
+      - '**'
+    tags:
+      - 'v*'
+
+env:
+  CONTAINER_REGISTRY: ghcr.io
+  CUSTOM_BUILD_ACTION_VERSION: ${{ github.sha }} # Use github.sha to sync with workflow version
+
+jobs:
+  build-and-push-all-images:
+    name: Build and push all docker images
+    strategy:
+      fail-fast: false
+      matrix:
+        include: 
+          - build_args: RELEASE_REPO=${{ github.repository }}
+            directory: docker/images/everest-clang-format
+            image_name: ${{ github.repository_owner }}/everest-clang-format
+            platforms: linux/amd64, linux/arm64, linux/arm/v7
+          - directory: docker/images/build-kit
+            file: alpine.Dockerfile
+            image_name: ${{ github.repository_owner }}/build-kit-alpine
+            platforms: linux/amd64, linux/arm64
+          - directory: docker/images/build-kit
+            file: debian.Dockerfile
+            image_name: ${{ github.repository_owner }}/build-kit-debian
+            platforms: linux/amd64, linux/arm64
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout build-and-deploy-docker-image action
+        uses: actions/checkout@v3
+        with:
+          path: .github/actions/build-and-deploy-docker-image
+          ref: ${{ env.CUSTOM_BUILD_ACTION_VERSION }}
+          repository: ${{ github.repository }}
+      - name: Build and Deploy Docker Image
+        uses: ./.github/actions/build-and-deploy-docker-image/github-actions/build-and-deploy-docker-image
+        with:
+          build_args: ${{ matrix.build_args || '' }}
+          directory: ${{ matrix.directory }}
+          dockerfile: ${{ matrix.file || 'Dockerfile' }}
+          docker_registry: ${{ env.CONTAINER_REGISTRY }}
+          force_build: ${{ inputs.force_build || false }}
+          github_ref_after: ${{ github.event.after }}
+          github_ref_before: ${{ github.event.before }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_user: ${{ github.actor }}
+          image_name: ${{ matrix.image_name }}
+          platforms: ${{ matrix.platforms }}
+          repository: ${{ github.repository }}
