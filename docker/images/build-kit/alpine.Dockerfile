@@ -55,8 +55,10 @@ RUN apk add --no-cache \
         maven \
         # required by pybind11
         python3-dev \
-	# required for certificate generation
-	openssl
+        # required for certificate generation
+        openssl \
+        # required for user and capability support in everest-framework >= 0.9.0
+        libcap-dev
 
 RUN python3 -m pip install \
     environs>=9.5.0 \
