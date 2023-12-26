@@ -1,0 +1,141 @@
+name: Build and push docker image
+
+inputs:
+  build_args:
+    default: ''
+    description: 'Build arguments'
+    required: false
+  directory:
+    description: 'Directory that contains the Dockerfile to build'
+    required: true
+  docker_registry:
+    default: 'ghcr.io'
+    description: 'Docker registry to push to'
+    required: true
+  dockerfile:
+    default: 'Dockerfile'
+    description: 'Dockerfile to build'
+    required: true
+  force_build:
+    default: false
+    description: 'Force build and push'
+    required: false
+  github_ref_after:
+    description: 'Github ref after the change'
+    required: true
+  github_ref_before:
+    description: 'Github ref before the change'
+    required: true
+  github_token:
+    description: 'Github token'
+    required: true
+  github_user:
+    description: 'Github user'
+    required: true
+  image_name:
+    description: '<org>/<image-name> Name of the image to deploy'
+    required: true
+  platforms:
+    default: 'linux/amd64,linux/arm64,linux/arm/v7'
+    description: 'Platforms to build for'
+    required: true
+  repository:
+    description: '<org>/<repo> Repository that contains the Dockerfile to build'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout Dockerfile
+      uses: actions/checkout@v3
+      with:
+        repository: ${{ inputs.repository }}
+        path: dockerfile-repo
+        ref: ${{ inputs.github_ref_after }}
+        token: ${{ inputs.github_token }}
+        fetch-depth: 0
+    - name: Check for changes
+      id: check-for-changes
+      shell: bash
+      run: |
+        set +e
+        changed_files="$(git diff --name-only ${{ inputs.github_ref_before }} ${{ inputs.github_ref_after }} | grep "^${{ inputs.directory }}" | wc  -l)"
+        set -e
+        is_changed='true'
+        if [ $changed_files -eq 0 ]; then
+          echo "No changes in ${{ inputs.directory }} directory"
+          is_changed=false
+        fi
+        echo "is_changed=$is_changed" >> $GITHUB_OUTPUT
+      working-directory: dockerfile-repo
+    - name: Check do build
+      id: check-do-build
+      shell: bash
+      run: |
+        do_build='false'
+        if [ ${{ inputs.force_build }} == 'true' ]; then
+          do_build='true'
+        fi
+        if [ ${{ steps.check-for-changes.outputs.is_changed }} == 'true' ]; then
+          do_build='true'
+        fi
+        echo "do_build=$do_build" >> $GITHUB_OUTPUT
+    - name: Extract metadata
+      if: steps.check-do-build.outputs.do_build == 'true'
+      id: meta
+      uses: docker/metadata-action@v5.3.0
+      with:
+        images: ${{ inputs.docker_registry }}/${{ inputs.image_name }}
+    - name: Set up QEMU
+      if: steps.check-do-build.outputs.do_build == 'true'
+      uses: docker/setup-qemu-action@v3.0.0
+      with:
+        image: tonistiigi/binfmt:latest
+        platforms: ${{ inputs.platforms }}
+    - name: Set up Docker Buildx
+      if: steps.check-do-build.outputs.do_build == 'true'
+      uses: docker/setup-buildx-action@v2
+    - name: Login to DockerHub
+      if: steps.check-do-build.outputs.do_build == 'true'
+      uses: docker/login-action@v3.0.0
+      with:
+        registry: ${{ inputs.docker_registry }}
+        username: ${{ inputs.github_user }}
+        password: ${{ inputs.github_token }}
+    - name: Build and push
+      if: steps.check-do-build.outputs.do_build == 'true'
+      uses: docker/build-push-action@v5.1.0
+      with:
+        context: dockerfile-repo/${{ inputs.directory }}
+        file: dockerfile-repo/${{ inputs.directory }}/${{ inputs.dockerfile }}
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        platforms: ${{ inputs.platforms }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        build-args: ${{ inputs.build_args }}
+    - name: Add summary
+      shell: bash
+      run: |
+        echo "## Build and deploy docker image (${{ inputs.image_name }})" >> $GITHUB_STEP_SUMMARY
+        echo "### Inputs" >> $GITHUB_STEP_SUMMARY
+        echo "repository: ${{ inputs.repository }}" >> $GITHUB_STEP_SUMMARY
+        echo "directory: ${{ inputs.directory }}" >> $GITHUB_STEP_SUMMARY
+        echo "image_name: ${{ inputs.image_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "docker_registry: ${{ inputs.docker_registry }}" >> $GITHUB_STEP_SUMMARY
+        echo "github_ref_before: ${{ inputs.github_ref_before }}" >> $GITHUB_STEP_SUMMARY
+        echo "github_ref_after: ${{ inputs.github_ref_after }}" >> $GITHUB_STEP_SUMMARY
+        echo "github_user: ${{ inputs.github_user }}" >> $GITHUB_STEP_SUMMARY
+        echo "### Changed files in ${{ inputs.repository }}/${{ inputs.directory }}" >> $GITHUB_STEP_SUMMARY
+        echo "${{ steps.check-for-changes.outputs.is_changed }}" >> $GITHUB_STEP_SUMMARY
+        if [ ${{ steps.check-do-build.outputs.do_build }} == 'true' ]; then
+          echo "### Metadata" >> $GITHUB_STEP_SUMMARY
+          echo "#### tags:" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+          echo "#### labels:" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.meta.outputs.labels }}" >> $GITHUB_STEP_SUMMARY
+          echo "### Url" >> $GITHUB_STEP_SUMMARY
+          echo "https://${{ inputs.docker_registry }}/${{ inputs.image_name }}" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "-> Build and push skipped" >> $GITHUB_STEP_SUMMARY
+        fi

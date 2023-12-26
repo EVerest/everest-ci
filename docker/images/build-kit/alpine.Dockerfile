@@ -13,7 +13,7 @@ RUN apk update && \
         git \
         curl \
         rsync \
-	bash \
+	    bash \
         # build tools
         samurai \
         make \
@@ -55,8 +55,15 @@ RUN apk add --no-cache \
         maven \
         # required by pybind11
         python3-dev \
-	# required for certificate generation
-	openssl
+        # required for certificate generation
+        openssl \
+        # required by cryptography
+        libffi-dev \
+        rust \
+        cargo \
+        # required by gcovr
+        libxml2-dev \
+        libxslt-dev
 
 RUN python3 -m pip install \
     environs>=9.5.0 \
