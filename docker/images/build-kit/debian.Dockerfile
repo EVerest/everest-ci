@@ -44,7 +44,9 @@ RUN apt-get install --no-install-recommends -y \
         pkg-config \
         libpcap-dev \
         # required by RiseV2G
-        maven
+        maven \
+        # required for user and capability support in everest-framework >= 0.9.0
+        libcap-dev
 
 # clean up apt
 RUN apt-get clean \
