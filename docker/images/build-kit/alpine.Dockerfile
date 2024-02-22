@@ -31,8 +31,9 @@ RUN apk update && \
         # python3 support
         py3-pip \
         # required for testing
-        gtest-dev \
+        # gtest-dev \
         lcov
+	libffi-dev
 
 
 # additional packages
@@ -60,7 +61,8 @@ RUN apk add --no-cache \
         # required for user and capability support in everest-framework >= 0.9.0
         libcap-dev
 
-RUN python3 -m pip install \
+RUN python3 -m pip install --upgrade pip && \
+    python3 -m pip install \
     environs>=9.5.0 \
     pydantic==1.* \
     psutil>=5.9.1 \
@@ -69,7 +71,8 @@ RUN python3 -m pip install \
     py4j>=0.10.9.5 \
     netifaces>=0.11.0 \
     python-dateutil>=2.8.2 \
-    gcovr==5.0
+    gcovr==5.0 \
+    --break-system-packages
 
 # install ev-cli
 RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@4a5ce956722929325cef3c2d73a8919c6d2e4013#subdirectory=ev-dev-tools
