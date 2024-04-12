@@ -32,7 +32,9 @@ RUN apk update && \
         py3-pip \
         # required for testing
         gtest-dev \
-        lcov
+        lcov \
+        # required by lcov
+        gzip 
 
 
 # additional packages
