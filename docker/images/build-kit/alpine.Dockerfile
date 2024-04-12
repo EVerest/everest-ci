@@ -82,9 +82,10 @@ RUN python3 -m pip install git+https://github.com/EVerest/everest-dev-environmen
 # install everest-cmake
 RUN git clone https://github.com/EVerest/everest-cmake.git $EVEREST_CMAKE_PATH
 
+ARG EVEREST_CMAKE_VERSION=feature/add-code-coverage
 RUN ( \
     cd $EVEREST_CMAKE_PATH \
-    git checkout feature/add-code-coverage \
+    git checkout $EVEREST_CMAKE_VERSION \
     rm -r .git \
     )
 
