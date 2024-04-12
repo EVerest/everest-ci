@@ -84,7 +84,7 @@ RUN git clone https://github.com/EVerest/everest-cmake.git $EVEREST_CMAKE_PATH
 
 RUN ( \
     cd $EVEREST_CMAKE_PATH \
-    git checkout 329f8db \
+    git checkout feature/add-code-coverage \
     rm -r .git \
     )
 
