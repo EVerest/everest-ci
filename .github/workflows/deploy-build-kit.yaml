@@ -1,4 +1,4 @@
-name: build-kit docker image
+name: Deploy build-kit docker image
 
 on:
   workflow_dispatch:
@@ -17,8 +17,8 @@ on:
         default: 'latest'
 
 jobs:
-  main:
-    name: Build and push
+  deploy-build-kit-image:
+    name: Build and push build-kit docker image
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
