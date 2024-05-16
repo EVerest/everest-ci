@@ -64,8 +64,8 @@ RUN python3 -m pip install \
     gcovr==5.0
 
 # install ev-cli
-ARG EV_CLI_VERSION=v0.2.3
-RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@${EV_CLI_VERSION}#subdirectory=ev-dev-tools
+ARG EVEREST_UTILS_VERSION=v0.2.3
+RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@${EVEREST_UTILS_VERSION}#subdirectory=ev-dev-tools
 
 # install edm
 RUN python3 -m pip install git+https://github.com/EVerest/everest-dev-environment@v0.5.5#subdirectory=dependency_manager
