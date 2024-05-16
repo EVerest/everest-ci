@@ -4,16 +4,13 @@ FROM alpine:3.17
 ARG EXT_MOUNT=/ext
 ARG EVEREST_CMAKE_PATH=/usr/lib/cmake/everest-cmake
 
-# Add edge/testing repository to enable installation of lcov
-RUN echo https://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
-
 RUN apk update && \
     apk add --no-cache \
         # basic command line tools
         git \
         curl \
         rsync \
-	bash \
+        bash \
         # build tools
         samurai \
         make \
@@ -31,8 +28,7 @@ RUN apk update && \
         # python3 support
         py3-pip \
         # required for testing
-        gtest-dev \
-        lcov
+        gtest-dev
 
 
 # additional packages
@@ -59,6 +55,11 @@ RUN apk add --no-cache \
         openssl \
         # required for user and capability support in everest-framework >= 0.9.0
         libcap-dev
+
+# Add edge/testing repository to enable installation of lcov, which is not available in the main repository
+RUN echo https://dl-cdn.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories
+RUN apk update && apk add --no-cache \
+        lcov=2.0-r2
 
 RUN python3 -m pip install \
     environs>=9.5.0 \
