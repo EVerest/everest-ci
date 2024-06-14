@@ -73,7 +73,7 @@ RUN python3 -m pip install \
     gcovr==5.0
 
 # install ev-cli
-ARG EVEREST_UTILS_VERSION=feature/add-error-vendor-id
+ARG EVEREST_UTILS_VERSION=v0.2.4
 RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@${EVEREST_UTILS_VERSION}#subdirectory=ev-dev-tools
 
 # install edm
