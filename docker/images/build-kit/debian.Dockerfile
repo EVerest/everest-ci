@@ -61,11 +61,8 @@ RUN python3 -m pip install \
     py4j>=0.10.9.5 \
     netifaces>=0.11.0 \
     python-dateutil>=2.8.2 \
-    gcovr==5.0
-
-# install ev-cli
-ARG EVEREST_UTILS_VERSION=v0.2.3
-RUN python3 -m pip install git+https://github.com/EVerest/everest-utils@${EVEREST_UTILS_VERSION}#subdirectory=ev-dev-tools
+    gcovr==5.0 \
+    build
 
 # install edm
 RUN python3 -m pip install git+https://github.com/EVerest/everest-dev-environment@v0.5.5#subdirectory=dependency_manager
@@ -75,7 +72,7 @@ RUN git clone https://github.com/EVerest/everest-cmake.git $EVEREST_CMAKE_PATH
 
 RUN ( \
     cd $EVEREST_CMAKE_PATH \
-    git checkout 329f8db \
+    git checkout v0.4.0 \
     rm -r .git \
     )
 
