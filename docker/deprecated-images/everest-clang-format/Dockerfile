@@ -11,5 +11,5 @@ RUN apt install -y \
     python-is-python3
 
 COPY run-clang-format.py /usr/bin/run-clang-format
-
-ENTRYPOINT ["/usr/bin/run-clang-format"]
+COPY deprecated_wrapper /usr/bin/deprecated_wrapper
+ENTRYPOINT ["/usr/bin/deprecated_wrapper"]

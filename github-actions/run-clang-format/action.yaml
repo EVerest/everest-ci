@@ -19,8 +19,9 @@ inputs:
     default: 'always'
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/everest/everest-clang-format:v1.1.0'
+  image: 'docker://ghcr.io/everest/everest-ci/build-env-base:refactor-docker-images' # LTODO: Update this
   args:
+    - /usr/bin/run-clang-format
     - /github/workspace/${{ inputs.source-dir }}
     - --extensions
     - ${{ inputs.extensions }}
