@@ -5,7 +5,7 @@ function print_warning {
     echo "---------------------------------------------"
     echo "WARNING"
     echo "This docker image is depreacted."
-    echo "Please use the debian based build-kit instead 'ghcr.io/everest/everest-ci/build-kit-base' instead."
+    echo "Please use the debian based build-kit 'ghcr.io/everest/everest-ci/build-kit-base' instead."
     echo "Fore more information see https://github.com/EVerest/everest-ci/pull/22"
     echo "---------------------------------------------"
     echo -e "\033[0m"

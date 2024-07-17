@@ -41,11 +41,7 @@ RUN apt update \
     # required by packet sniffer module
     pkg-config=1.8.1-1 \
     libpcap-dev=1.10.3-1 \
-    libcap-dev=1:2.66-4 \
-    # required by RiseV2G
-    maven=3.8.7-1 \
-    libxml2-dev=2.9.14+dfsg-1.3~deb12u1 \
-    libxslt1-dev=1.1.35-1
+    libcap-dev=1:2.66-4
 
 # Install Python packages
 RUN apt update \
@@ -68,13 +64,13 @@ RUN python3 -m pip install --break-system-packages \
     gcovr==7.2
 
 # Install EVerest dependency manager
-ARG EDM_VERSION=v0.5.5
+ARG EDM_VERSION=v0.6.2
 RUN python3 -m pip install --break-system-packages \
     git+https://github.com/EVerest/everest-dev-environment@${EDM_VERSION}#subdirectory=dependency_manager
 
 # Install everest-cmake
 ARG EVEREST_CMAKE_PATH=/usr/lib/cmake/everest-cmake
-ARG EVEREST_CMAKE_VERSION=v0.4.2
+ARG EVEREST_CMAKE_VERSION=v0.4.3
 RUN git clone https://github.com/EVerest/everest-cmake.git ${EVEREST_CMAKE_PATH} \
     && cd ${EVEREST_CMAKE_PATH} \
     && git checkout ${EVEREST_CMAKE_VERSION} \

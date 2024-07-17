@@ -3,13 +3,6 @@
 setup_cache(){
     export CPM_SOURCE_CACHE=$EXT_MOUNT/cache/cpm
     export CCACHE_DIR=$EXT_MOUNT/cache/ccache
-
-    maven_cache_dir=$EXT_MOUNT/cache/m2-repo
-
-    # we copy the settings file each time in case the $HOME folder changes
-    mkdir -p $HOME/.m2 || true
-    cp $ASSETS_PATH/maven-settings.xml $HOME/.m2/settings.xml
-    sed -i 's@MAVEN_CACHE_REPOSITORY@'"$maven_cache_dir"'@' $HOME/.m2/settings.xml
 }
 
 # if first cmd is exec we're going to exec what follows
