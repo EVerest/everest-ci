@@ -46,21 +46,13 @@ RUN apt update \
 # Install Python packages
 RUN apt update \
     && apt install --no-install-recommends -y \
-    python3-venv=3.11.2-1+b1 \
-    python3-pydantic=1.10.4-1 \
-    python3-psutil=5.9.4-1+b1 \
-    python3-cryptography=38.0.4-3 \
-    python3-netifaces=0.11.0-2+b1 \
-    python3-dateutil=2.8.2-2
+    python3-venv=3.11.2-1+b1
 
 RUN apt clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Install additional Python packages
 RUN python3 -m pip install --break-system-packages \
-    environs==11.0.0 \
-    aiofile==3.8.8 \
-    py4j==0.10.9.7 \
     gcovr==7.2
 
 # Install EVerest dependency manager
