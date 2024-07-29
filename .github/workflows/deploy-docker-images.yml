@@ -7,6 +7,10 @@ on:
         description: 'Force rebuild of all images'
         default: false
         type: boolean
+      build_deprecated_images:
+        description: 'Build deprecated images'
+        default: false
+        type: boolean
   push:
     branches:
       - '**'
@@ -15,21 +19,181 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  DOCKER_DIRECTORY: docker/images
+  PLATFORMS: |
+    linux/amd64
+  PATH_TO_DEPLOY_SINGLE_DOCKER_IMAGE_WORKFLOW: .github/workflows/deploy-single-docker-image.yml
+  PATH_TO_DEPLOY_DOCKER_IMAGES_WORKFLOW: .github/workflows/deploy-docker-images.yml
 
 jobs:
-  build-and-push-all-images:
-    name: Build and push all docker images
-    strategy:
-      matrix:
-        image_name: [everest-clang-format]
-    uses: everest/everest-ci/.github/workflows/deploy-single-docker-image.yml@v1.1.0
-    with:
-      force_rebuild: ${{ inputs.force_rebuild || (github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/' )) || false }}
-      image_name: ${{ matrix.image_name }}
-      docker_directory: docker/images/
-      docker_registry: ghcr.io
-      github_ref_before: ${{ github.event.before }}
-      github_ref_after: ${{ github.event.after }}
+  env-setup:
+    # Since env variables can't be passed to reusable workflows, we need to pass them as outputs
+    name: Evaluate force rebuild and set env variables as outputs
+    runs-on: ubuntu-22.04
+    outputs:
+      force_rebuild: ${{ steps.check.outputs.force_rebuild }}
+      docker_registry: ${{ env.REGISTRY }}
+      docker_directory: ${{ env.DOCKER_DIRECTORY }}
+      platforms: ${{ env.PLATFORMS }}
+      repository_name: ${{ github.event.repository.name }}
+      build_deprecated_images: ${{ steps.check.outputs.build_deprecated_images }}
+      path_to_deploy_single_docker_image_workflow: ${{ env.PATH_TO_DEPLOY_SINGLE_DOCKER_IMAGE_WORKFLOW }}
+      path_to_deploy_docker_images_workflow: ${{ env.PATH_TO_DEPLOY_DOCKER_IMAGES_WORKFLOW }}
+    steps:
+      - id: check
+        run: |
+          echo "force_rebuild=${{ inputs.force_rebuild || (github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/' )) || false }}" >> $GITHUB_OUTPUT
+          # Build deprecated images if not explicitly disabled
+          #TODO: set default to false, once backwards compatibility is no longer needed
+          echo "build_deprecated_images=${{ inputs.build_deprecated_images || true }}" >> $GITHUB_OUTPUT
+
+  # One job for each image, since the images build on top of each other a matrix strategy is not possible
+  run-env-base:
+    needs:
+      - env-setup
+    name: Build and push run-env-base docker image
+    uses: ./.github/workflows/deploy-single-docker-image.yml
     secrets:
       SA_GITHUB_PAT: ${{ secrets.SA_GITHUB_PAT }}
       SA_GITHUB_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
+    with:
+      force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' }}
+      image_name: ${{ needs.env-setup.outputs.repository_name }}/run-env-base
+      directory: ${{ needs.env-setup.outputs.docker_directory }}/run-env-base
+      docker_registry: ${{ needs.env-setup.outputs.docker_registry }}
+      github_ref_before: ${{ github.event.before }}
+      github_ref_after: ${{ github.event.after }}
+      platforms: ${{ needs.env-setup.outputs.platforms }}
+      depends_on_paths: |
+        ${{ needs.env-setup.outputs.path_to_deploy_single_docker_image_workflow }}
+        ${{ needs.env-setup.outputs.path_to_deploy_docker_images_workflow }}
+  build-env-base:
+    needs:
+      - env-setup
+      - run-env-base
+    name: Build and push build-env-base docker image
+    uses: ./.github/workflows/deploy-single-docker-image.yml
+    secrets:
+      SA_GITHUB_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      SA_GITHUB_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
+    with:
+      force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' || needs.run-env-base.outputs.rebuild == 'true' }}
+      image_name: ${{ needs.env-setup.outputs.repository_name }}/build-env-base
+      directory: ${{ needs.env-setup.outputs.docker_directory }}/build-env-base
+      docker_registry: ${{ needs.env-setup.outputs.docker_registry }}
+      github_ref_before: ${{ github.event.before }}
+      github_ref_after: ${{ github.event.after }}
+      platforms: ${{ needs.env-setup.outputs.platforms }}
+      depends_on_paths: |
+        ${{ needs.env-setup.outputs.path_to_deploy_single_docker_image_workflow }}
+        ${{ needs.env-setup.outputs.path_to_deploy_docker_images_workflow }}
+      build_args: |
+        BASE_IMAGE_TAG=${{ needs.run-env-base.outputs.one_image_tag_short }}
+        
+  dev-env-base:
+    needs:
+      - env-setup
+      - build-env-base
+    name: Build and push dev-env-base docker image
+    uses: ./.github/workflows/deploy-single-docker-image.yml
+    secrets:
+      SA_GITHUB_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      SA_GITHUB_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
+    with:
+      force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' || needs.build-env-base.outputs.rebuild == 'true' }}
+      image_name: ${{ needs.env-setup.outputs.repository_name }}/dev-env-base
+      directory: ${{ needs.env-setup.outputs.docker_directory }}/dev-env-base
+      docker_registry: ${{ needs.env-setup.outputs.docker_registry }}
+      github_ref_before: ${{ github.event.before }}
+      github_ref_after: ${{ github.event.after }}
+      platforms: ${{ needs.env-setup.outputs.platforms }}
+      depends_on_paths: |
+        ${{ needs.env-setup.outputs.path_to_deploy_single_docker_image_workflow }}
+        ${{ needs.env-setup.outputs.path_to_deploy_docker_images_workflow }}
+      build_args: |
+        BASE_IMAGE_TAG=${{ needs.build-env-base.outputs.one_image_tag_short }}
+  build-kit-base:
+    needs:
+      - env-setup
+      - build-env-base
+    name: Build and push build-kit docker image
+    uses: ./.github/workflows/deploy-single-docker-image.yml
+    secrets:
+      SA_GITHUB_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      SA_GITHUB_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
+    with:
+      force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' || needs.build-env-base.outputs.rebuild == 'true' }}
+      image_name: ${{ needs.env-setup.outputs.repository_name }}/build-kit-base
+      directory: ${{ needs.env-setup.outputs.docker_directory }}/build-kit-base
+      docker_registry: ${{ needs.env-setup.outputs.docker_registry }}
+      github_ref_before: ${{ github.event.before }}
+      github_ref_after: ${{ github.event.after }}
+      platforms: ${{ needs.env-setup.outputs.platforms }}
+      depends_on_paths: |
+        ${{ needs.env-setup.outputs.path_to_deploy_single_docker_image_workflow }}
+        ${{ needs.env-setup.outputs.path_to_deploy_docker_images_workflow }}
+      build_args: |
+        BASE_IMAGE_TAG=${{ needs.build-env-base.outputs.one_image_tag_short }}
+  # Include deprecated images for backwards compatibility
+  deprecated-everest-clang-format:
+    if: ${{ needs.env-setup.outputs.build_deprecated_images == 'true' }}
+    needs:
+      - env-setup
+    name: Build and push deprecated everest-clang-format docker image
+    uses: ./.github/workflows/deploy-single-docker-image.yml
+    secrets:
+      SA_GITHUB_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      SA_GITHUB_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
+    with:
+      force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' }}
+      image_name: everest-clang-format
+      directory: docker/deprecated-images/everest-clang-format
+      docker_registry: ${{ needs.env-setup.outputs.docker_registry }}
+      github_ref_before: ${{ github.event.before }}
+      github_ref_after: ${{ github.event.after }}
+      platforms: ${{ needs.env-setup.outputs.platforms }}
+      depends_on_paths: |
+        ${{ needs.env-setup.outputs.path_to_deploy_single_docker_image_workflow }}
+        ${{ needs.env-setup.outputs.path_to_deploy_docker_images_workflow }}
+  deprecated-build-kit-alpine:
+    if: ${{ needs.env-setup.outputs.build_deprecated_images == 'true' }}
+    needs:
+      - env-setup
+    name: Build and push deprecated build-kit-alpine docker image
+    uses: ./.github/workflows/deploy-single-docker-image.yml
+    secrets:
+      SA_GITHUB_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      SA_GITHUB_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
+    with:
+      force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' }}
+      image_name: build-kit-alpine
+      directory: docker/deprecated-images/build-kit
+      docker_file_name: alpine.Dockerfile
+      docker_registry: ${{ needs.env-setup.outputs.docker_registry }}
+      github_ref_before: ${{ github.event.before }}
+      github_ref_after: ${{ github.event.after }}
+      platforms: ${{ needs.env-setup.outputs.platforms }}
+      depends_on_paths: |
+        ${{ needs.env-setup.outputs.path_to_deploy_single_docker_image_workflow }}
+        ${{ needs.env-setup.outputs.path_to_deploy_docker_images_workflow }}
+  deprecated-build-kit-debian:
+    if: ${{ needs.env-setup.outputs.build_deprecated_images == 'true' }}
+    needs: 
+      - env-setup
+    name: Build and push deprecated build-kit-debian docker image
+    uses: ./.github/workflows/deploy-single-docker-image.yml
+    secrets:
+      SA_GITHUB_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      SA_GITHUB_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
+    with:
+      force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' }}
+      image_name: build-kit-debian
+      directory: docker/deprecated-images/build-kit
+      docker_file_name: debian.Dockerfile
+      docker_registry: ${{ needs.env-setup.outputs.docker_registry }}
+      github_ref_before: ${{ github.event.before }}
+      github_ref_after: ${{ github.event.after }}
+      platforms: ${{ needs.env-setup.outputs.platforms }}
+      depends_on_paths: |
+        ${{ needs.env-setup.outputs.path_to_deploy_single_docker_image_workflow }}
+        ${{ needs.env-setup.outputs.path_to_deploy_docker_images_workflow }}

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+function print_warning {
+    echo -e "\033[0;31m"
+    echo "---------------------------------------------"
+    echo "WARNING"
+    echo "This docker image is depreacted."
+    echo "It was moved from 'ghcr.io/everest/everest-clang-format' to 'ghcr.io/everest/everest-ci/everest-clang-format'."
+    echo "Please use 'ghcr.io/everest/everest-ci/everest-clang-format' instead."
+    echo "---------------------------------------------"
+    echo -e "\033[0m"
+}
+
+print_warning
+
+/usr/bin/clang-format "$@"
+exit_code=$?
+
+print_warning
+exit $exit_code

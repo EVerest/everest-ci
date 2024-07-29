@@ -91,5 +91,6 @@ COPY ./entrypoint.sh /
 
 WORKDIR $WORKSPACE_PATH
 
-ENTRYPOINT ["/entrypoint.sh"]
+COPY deprecated_wrapper /
+ENTRYPOINT ["/deprecated_wrapper"]
 CMD ["run-script", "init"]

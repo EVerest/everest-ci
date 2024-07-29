@@ -7,11 +7,15 @@ on:
         description: 'Name of the image to build and push'
         required: true
         type: string
-      docker_directory:
-        description: 'Directory containing the docker directory'
+      directory:
+        description: 'Directory containing the Dockerfile'
         required: true
         type: string
-        default: docker/
+      docker_file_name:
+        description: 'Name of the Dockerfile'
+        required: false
+        default: 'Dockerfile'
+        type: string
       docker_registry:
         description: 'Docker registry to push to'
         required: true
@@ -29,6 +33,34 @@ on:
         description: 'Forces rebuild of docker image, even if no changes are detected'
         default: false
         type: boolean
+      platforms:
+        description: 'Platforms to build for'
+        default: |
+          linux/amd64
+          linux/arm64
+          linux/arm/v7
+        type: string
+      depends_on_paths:
+        description: 'Directories that need to be checked for changes before building this image'
+        required: false
+        type: string
+      build_args:
+        description: 'Build arguments for the Dockerfile'
+        required: false
+        type: string
+    outputs:
+      rebuild:
+        description: 'Whether the image is rebuilt or not'
+        value: ${{ jobs.check.outputs.rebuild }}
+      image_tags:
+        description: 'Tags of the deployed image with image name'
+        value: ${{ jobs.build-and-push.outputs.image_tags }}
+      one_image_tag_short:
+        description: 'One tag of the deployed image without image name'
+        value: ${{ jobs.build-and-push.outputs.one_image_tag_short }}
+      one_image_tag_long:
+        description: 'One tag of the deployed image with image name'
+        value: ${{ jobs.build-and-push.outputs.one_image_tag_long }}
     secrets:
       SA_GITHUB_PAT:
         description: 'Github PAT with access to the repository'
@@ -41,10 +73,11 @@ jobs:
   check:
     name: Check for changes
     outputs:
-      changed_files: ${{ steps.changed-files.outputs.changed_files }}
+      rebuild: ${{ steps.set-outputs.outputs.rebuild }}
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout Dockerfile
+      if: ${{ inputs.force_rebuild == false }}
       uses: actions/checkout@v3
       with:
         repository: ${{ github.repository }} 
@@ -52,17 +85,87 @@ jobs:
         ref: ${{ inputs.github_ref_after }}
         token: ${{secrets.SA_GITHUB_PAT}}
         fetch-depth: 0
-    - name: Get changed files
-      id: changed-files
+    - name: Validate github_ref_before and github_ref_after
+      if: ${{ inputs.force_rebuild == false }}
+      id: validate-inputs
       run: |
-        echo "changed_files=$(git diff --name-only ${{ inputs.github_ref_before }} ${{ inputs.github_ref_after }} | grep "^${{inputs.docker_directory}}/${{inputs.image_name}}" | wc  -l)" >> $GITHUB_OUTPUT
+        echo "Check validity of github_ref_before.."
+        if git cat-file -e ${{ inputs.github_ref_before }}^{commit}; then
+          echo "github_ref_before='${{ inputs.github_ref_before }}' is a commit!✅"
+        else
+          echo "github_ref_before='${{ inputs.github_ref_before }}' is not a commit!❌ -> Rebuild image!"
+          echo "validation_failed=true" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+        echo "Check validity of github_ref_after.."
+        if git cat-file -e ${{ inputs.github_ref_after }}^{commit}; then
+          echo "github_ref_after='${{ inputs.github_ref_after }}' is a commit!✅"
+        else
+          echo "github_ref_after='${{ inputs.github_ref_after }}' is not a commit!❌ -> Rebuild image!"
+          echo "validation_failed=true" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+        echo "validation_failed=false" >> $GITHUB_OUTPUT
       working-directory: source
+    - name: Parse depends_on_paths
+      if: ${{  inputs.force_rebuild == false && steps.validate-inputs.outputs.validation_failed == 'false' }}
+      id: setup-regex
+      shell: python3 {0}
+      working-directory: source
+      run: |
+        import os
+        list_of_paths = """${{ inputs.depends_on_paths }}""".split("\n")
+        # remove all empty lines
+        list_of_paths = list(filter(None, list_of_paths))
+        for path in list_of_paths:
+          if os.path.isdir(f"{path}"):
+            path = f"{path}/*"
+          elif os.path.isfile(f"{path}"):
+            path = f"{path}"
+          else:
+            print(f"Path {path} does not exist!❌")
+            exit(1)
+        if not "${{ inputs.directory }}" in list_of_paths:
+          list_of_paths.append("${{ inputs.directory }}/*")
+        regex = "|".join(list_of_paths)
+        # set the regex as an output
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+          f.write(f"regex={regex}\n")
+        print(f"Set regex={regex}")
+    - name: Get changed files
+      if: ${{ inputs.force_rebuild == false && steps.validate-inputs.outputs.validation_failed == 'false' }}
+      id: check
+      run: |
+        echo "Checking for changes in paths ${{ steps.setup-regex.outputs.regex }}.."
+        EXIT_CODE=0
+        changed_files="$(git diff --name-only ${{ inputs.github_ref_before }} ${{ inputs.github_ref_after }} | grep -E '${{ steps.setup-regex.outputs.regex }}')" || EXIT_CODE=$?
+        if [ $EXIT_CODE -eq 1 ]; then
+          echo "No changes detected in ${{ steps.setup-regex.outputs.regex }}!🔍"
+          echo "changes_detected=false" >> $GITHUB_OUTPUT
+          exit 0
+        elif [ $EXIT_CODE -ne 0 ]; then
+          echo "Error while checking for changes in ${{ steps.setup-regex.outputs.regex }}!❌"
+          exit $EXIT_CODE
+        else
+          echo "🔍 Changes detected with regex ${{ steps.setup-regex.outputs.regex }} in the following files:"
+          echo "$changed_files"
+          echo "changes_detected=true" >> $GITHUB_OUTPUT
+        fi
+      working-directory: source
+    - name: Set outputs
+      if: ${{ inputs.force_rebuild == false }}
+      id: set-outputs
+      run: |
+        echo "rebuild=${{ steps.check.outputs.changes_detected == 'true' || steps.validate-inputs.outputs.validation_failed == 'true' }}" >> $GITHUB_OUTPUT
 
   build-and-push:
     name: Build and push
     needs: check
-    if: ${{ needs.check.outputs.changed_files > 0 || inputs.force_rebuild }}
     runs-on: ubuntu-22.04
+    outputs:
+      image_tags: ${{ steps.meta.outputs.tags }}
+      one_image_tag_short: ${{ steps.extract-one-tag.outputs.tag_short }}
+      one_image_tag_long: ${{ steps.extract-one-tag.outputs.tag_long }}
     steps:
     - name: Checkout Dockerfile
       uses: actions/checkout@v3
@@ -75,39 +178,89 @@ jobs:
     - name: Get context / Path of Dockerfile
       id: get-context
       run: |
-        if [ -f source/${{ inputs.docker_directory }}/${{ inputs.image_name }}/Dockerfile ]; then
-          echo "::set-output name=path::source/${{ inputs.docker_directory }}/${{ inputs.image_name }}/"
-        elif [ -f source/${{ inputs.docker_directory }}/${{ inputs.image_name }}/.devcontainer/Dockerfile ]; then
-          echo "::set-output name=path::source/${{ inputs.docker_directory }}/${{ inputs.image_name }}/.devcontainer/"
+        if [ -f source/${{ inputs.directory }}/${{ inputs.docker_file_name }} ]; then
+          echo "path=source/${{ inputs.directory }}" >> $GITHUB_OUTPUT
+        elif [ -f source/${{ inputs.directory }}/.devcontainer/${{ inputs.docker_file_name }} ]; then
+          echo "path=source/${{ inputs.directory }}/.devcontainer" >> $GITHUB_OUTPUT
         else
-          echo "No Dockerfile found for image ${{ inputs.image_name }}!"
+          echo "No Dockerfile found for image ${{ inputs.image_name }} in dokcer_directory ${{ inputs.directory }} with docker_file_name ${{ inputs.docker_file_name }}!"
           exit 1
         fi
+    - name: Parse platforms
+      id: parse-platforms
+      run: |
+        # remove all empty lines
+        result=$(echo "${{ inputs.platforms }}" | sed '/^$/d')
+        # replace newlines with commas, remove trailing comma
+        result=$(echo "${result}" | tr '\n' ',' | sed 's/,$//')
+        echo "platforms=${result}" >> $GITHUB_OUTPUT
     - name: Extract metadata
       id: meta
       uses: docker/metadata-action@v3
       with:
-        images: ${{ inputs.docker_registry }}/${{ github.repository_owner }}/${{ inputs.image_name }}
+        sep-tags: ','
+        images: |
+          ${{ inputs.docker_registry }}/${{ github.repository_owner }}/${{ inputs.image_name }}
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
+      if: ${{ needs.check.outputs.rebuild == 'true' || inputs.force_rebuild }}
       with:
         image: tonistiigi/binfmt:latest
         platforms: all
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
+      if: ${{ needs.check.outputs.rebuild == 'true' || inputs.force_rebuild }}
     - name: Login to DockerHub
       uses: docker/login-action@v2
+      if: ${{ needs.check.outputs.rebuild == 'true' || inputs.force_rebuild }}
       with:
         registry: ${{ inputs.docker_registry }}
         username: ${{ secrets.SA_GITHUB_USERNAME }}
         password: ${{ secrets.SA_GITHUB_PAT }}
     - name: Build and push
       uses: docker/build-push-action@v3
+      if: ${{ needs.check.outputs.rebuild == 'true' || inputs.force_rebuild }}
       with:
         context: ${{ steps.get-context.outputs.path }}
+        file: ${{ steps.get-context.outputs.path }}/${{ inputs.docker_file_name }}
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}    
-        platforms: linux/amd64,linux/arm64,linux/arm/v7
+        platforms: ${{ steps.parse-platforms.outputs.platforms }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        build-args: ${{ inputs.build_args }}
+    - name: Extract one image tag
+      id: extract-one-tag
+      shell: python3 {0}
+      run: |
+        import os
+        tags = "${{ steps.meta.outputs.tags }}".split(",")
+        tags_short = [tag.split(":")[-1] for tag in tags]
+        if len(tags_short) == 0:
+          print("No tags found!❌")
+          exit(1)
+        tag_short = None
+        for t in tags_short:
+          if t.startswith("v"):
+            tag_short = t
+            break
+        if tag_short is None:
+          for t in tags_short:
+            if not t.startswith("latest"):
+              tag_short = t
+              break
+        if tag_short is None:
+          tag_short = tags_short[0]
+        if tag_short is None:
+          print("No tag found!❌")
+          exit(1)
+        for t in tags:
+          if t.endswith(tag_short):
+            tag_long = t
+            break
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+          f.write(f"tag_short={tag_short}\n")
+          print(f"Set tag_short={tag_short}")
+          f.write(f"tag_long={tag_long}\n")
+          print(f"Set tag_long={tag_long}")
