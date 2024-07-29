@@ -41,19 +41,24 @@ RUN apt update \
     # required by packet sniffer module
     pkg-config=1.8.1-1 \
     libpcap-dev=1.10.3-1 \
-    libcap-dev=1:2.66-4
-
-# Install Python packages
-RUN apt update \
-    && apt install --no-install-recommends -y \
-    python3-venv=3.11.2-1+b1
+    libcap-dev=1:2.66-4 \
+    # Install Python packages
+    # Install Python packages - general
+    python3-venv=3.11.2-1+b1 \
+    # Install Python packages - required by everest-core to run integration tests
+    python3-build=0.9.0-1 \
+    # Install Python packages- required to build documentation
+    python3-sphinx=5.3.0-4
 
 RUN apt clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Install additional Python packages
 RUN python3 -m pip install --break-system-packages \
-    gcovr==7.2
+    gcovr==7.2 \
+    #Required by documentation - Sphinx extensions
+    sphinxcontrib-contentui==0.2.5 \
+    sphinxcontrib-svg2pdfconverter==1.2.2
 
 # Install EVerest dependency manager
 ARG EDM_VERSION=v0.6.2

@@ -15,15 +15,6 @@ RUN apt update \
     && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
     && chmod 0440 /etc/sudoers.d/${USERNAME}
 
-# Additional Build Tools
-# Additional Build Tool - Documentation
-RUN apt update && apt install --no-install-recommends -y \
-    python3-sphinx=5.3.0-4
-RUN python3 -m pip install --break-system-packages \
-    # Sphinx extensions
-    sphinxcontrib-contentui==0.2.5 \
-    sphinxcontrib-svg2pdfconverter==1.2.2
-
 # Development Tools
 # Development Tools - General
 RUN apt update \
