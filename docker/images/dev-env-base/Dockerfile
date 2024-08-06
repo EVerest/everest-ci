@@ -36,18 +36,18 @@ RUN python3 -m pip install --break-system-packages \
     # Style checker for RST/Sphinx
     doc8==1.1.1
 # Development Tools - Docker
-RUN sudo apt update && sudo apt install -y --no-install-recommends \
-    ca-certificates \
-    curl \
-    && sudo install -m 0755 -d /etc/apt/keyrings \
-    && sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc \
-    && sudo chmod a+r /etc/apt/keyrings/docker.asc \
+RUN apt update && apt install -y --no-install-recommends \
+    ca-certificates=20230311 \
+    curl=7.88.1-10+deb12u6 \
+    && install -m 0755 -d /etc/apt/keyrings \
+    && curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc \
+    && chmod a+r /etc/apt/keyrings/docker.asc \
     && echo \
     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
     $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null \
-    && sudo apt update \
-    && sudo apt install -y --no-install-recommends \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null \
+    && apt update \
+    && apt install -y --no-install-recommends \
     docker-ce=5:27.0.3-1~debian.12~bookworm \
     docker-ce-cli=5:27.1.1-1~debian.12~bookworm \
     containerd.io=1.7.19-1 \
