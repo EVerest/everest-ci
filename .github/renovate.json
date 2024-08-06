@@ -1,0 +1,22 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "customManagers": [
+    {
+      "description": "Custom manager for Custom Docker GitHub Actions",
+      "customType": "regex",
+      "datasourceTemplate": "docker",
+      "fileMatch": [
+        "(^|/)action\\.ya?ml$"
+      ],
+      "matchStrings": [
+        "docker://(?<depName>.*?):(?<currentValue>[\\w+\\.\\-]*)"
+      ]
+    }
+  ],
+  "labels": [
+    "renovate"
+  ]
+}
