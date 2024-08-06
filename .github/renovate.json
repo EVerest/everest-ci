@@ -15,5 +15,8 @@
         "docker://(?<depName>.*?):(?<currentValue>[\\w+\\.\\-]*)"
       ]
     }
+  ],
+  "labels": [
+    "renovate"
   ]
 }
