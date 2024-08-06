@@ -196,7 +196,7 @@ jobs:
         echo "platforms=${result}" >> $GITHUB_OUTPUT
     - name: Extract metadata
       id: meta
-      uses: docker/metadata-action@v3
+      uses: docker/metadata-action@v5
       with:
         sep-tags: ','
         images: |
