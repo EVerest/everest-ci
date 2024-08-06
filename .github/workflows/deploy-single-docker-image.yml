@@ -202,7 +202,7 @@ jobs:
         images: |
           ${{ inputs.docker_registry }}/${{ github.repository_owner }}/${{ inputs.image_name }}
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
+      uses: docker/setup-qemu-action@v3
       if: ${{ needs.check.outputs.rebuild == 'true' || inputs.force_rebuild }}
       with:
         image: tonistiigi/binfmt:latest
