@@ -78,7 +78,7 @@ jobs:
     steps:
     - name: Checkout Dockerfile
       if: ${{ inputs.force_rebuild == false }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: ${{ github.repository }} 
         path: source
@@ -168,7 +168,7 @@ jobs:
       one_image_tag_long: ${{ steps.extract-one-tag.outputs.tag_long }}
     steps:
     - name: Checkout Dockerfile
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: ${{ github.repository }} 
         path: source
