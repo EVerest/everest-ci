@@ -9,7 +9,7 @@
       "customType": "regex",
       "datasourceTemplate": "docker",
       "fileMatch": [
-        "^action.yaml$"
+        "(^|/)action\\.ya?ml$"
       ],
       "matchStrings": [
         "docker://(?<depName>.*?):(?<currentValue>[\\w+\\.\\-]*)"
