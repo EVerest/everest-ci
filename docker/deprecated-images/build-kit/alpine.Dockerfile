@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM alpine:3.17
+FROM alpine:3.20
 
 ARG EXT_MOUNT=/ext
 ARG EVEREST_CMAKE_PATH=/usr/lib/cmake/everest-cmake
