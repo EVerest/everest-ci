@@ -3,7 +3,7 @@ FROM debian:12-slim
 
 RUN apt update \
     && apt install --no-install-recommends -y \
-    openjdk-17-jre=17.0.11+9-1~deb12u1 \
+    openjdk-17-jre=17.0.12+7-2~deb12u1 \
     nodejs=18.19.0+dfsg-6~deb12u2 \
     npm=9.2.0~ds1-1 \
     python3-pip=23.0.1+dfsg-1 \
