@@ -67,7 +67,7 @@ RUN python3 -m pip install --break-system-packages \
 
 # Install everest-cmake
 ARG EVEREST_CMAKE_PATH=/usr/lib/cmake/everest-cmake
-ARG EVEREST_CMAKE_VERSION=v0.4.3
+ARG EVEREST_CMAKE_VERSION=v0.4.4
 RUN git clone https://github.com/EVerest/everest-cmake.git ${EVEREST_CMAKE_PATH} \
     && cd ${EVEREST_CMAKE_PATH} \
     && git checkout ${EVEREST_CMAKE_VERSION} \
