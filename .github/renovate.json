@@ -14,9 +14,52 @@
       "matchStrings": [
         "docker://(?<depName>.*?):(?<currentValue>[\\w+\\.\\-]*)"
       ]
+    },
+    {
+      "description": "Custom manager for dependencies in Dockerfiles",
+      "customType": "regex",
+      "fileMatch": [
+        "(^|/|\\.)Dockerfile$",
+        "(^|/)Dockerfile\\.[^/]*$"
+      ],
+      "matchStrings": [
+        "\\s*renovate:\\s*datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\sENV .*?_VERSION=\\\"?(?<currentValue>.*)\\\"?\\s"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
   ],
   "labels": [
     "renovate"
+  ],
+  "packageRules": [
+    {
+      "description": "Group all debian_12 dependencies in Dockerfiles",
+      "matchFileNames": [
+        "(^|/|\\.)Dockerfile$",
+        "(^|/)Dockerfile\\.[^/]*$"
+      ],
+      "matchDatasources":[
+        "repology"
+      ],
+      "matchDepNames":[
+        "debian_12/.*"
+      ]
+    },
+    {
+      "description": "Group all pypi dependencies in Dockerfiles",
+      "matchFileNames": [
+        "(^|/|\\.)Dockerfile$",
+        "(^|/)Dockerfile\\.[^/]*$"
+      ],
+      "matchDatasources": [
+        "pypi"
+      ]
+    },
+    {
+      "description": "Group all deps in workflow files",
+      "matchManagers": [
+        "github-actions"
+      ]
+    }
   ]
 }
