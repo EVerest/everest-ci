@@ -15,23 +15,23 @@ RUN apt update \
     && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
     && chmod 0440 /etc/sudoers.d/${USERNAME}
 
-# renovate: datasource=repology depName=debian12/wget versioning=loose
+# renovate: datasource=repology depName=debian_12/wget versioning=loose
 ENV WGET_VERSION=1.21.3-1+b2
-# renovate: datasource=repology depName=debian12/doxygen versioning=loose
+# renovate: datasource=repology depName=debian_12/doxygen versioning=loose
 ENV DOXYGEN_VERSION=1.9.4-4
-# renovate: datasource=repology depName=debian12/graphviz versioning=loose
+# renovate: datasource=repology depName=debian_12/graphviz versioning=loose
 ENV GRAPHVIZ_VERSION=2.42.2-7+b3
-# renovate: datasource=repology depName=debian12/build-essential versioning=loose
+# renovate: datasource=repology depName=debian_12/build-essential versioning=loose
 ENV BUILD_ESSENTIAL_VERSION=12.9
-# renovate: datasource=repology depName=debian12/cppcheck versioning=loose
+# renovate: datasource=repology depName=debian_12/cppcheck versioning=loose
 ENV CPPCHECK_VERSION=2.10-2
-# renovate: datasource=repology depName=debian12/bash-completion versioning=loose
+# renovate: datasource=repology depName=debian_12/bash-completion versioning=loose
 ENV BASH_COMPLETION_VERSION=1:2.11-6
-# renovate: datasource=repology depName=debian12/vim versioning=loose
+# renovate: datasource=repology depName=debian_12/vim versioning=loose
 ENV VIM_VERSION=2:9.0.1378-2
-# renovate: datasource=repology depName=debian12/gdb versioning=loose
+# renovate: datasource=repology depName=debian_12/gdb versioning=loose
 ENV GDB_VERSION=13.1-3
-# renovate: datasource=repology depName=debian12/nmap versioning=loose
+# renovate: datasource=repology depName=debian_12/nmap versioning=loose
 ENV NMAP_VERSION=7.93+dfsg1-1
 
 # Development Tools
@@ -61,9 +61,9 @@ RUN python3 -m pip install --break-system-packages \
     # Style checker for RST/Sphinx
     doc8==${DOC8_VERSION}
 
-# renovate: datasource=repology depName=debian12/ca-certificates versioning=loose
+# renovate: datasource=repology depName=debian_12/ca-certificates versioning=loose
 ENV CA_CERTIFICATES_VERSION=20230311
-# renovate: datasource=repology depName=debian12/curl versioning=loose
+# renovate: datasource=repology depName=debian_12/curl versioning=loose
 ENV CURL_VERSION=7.88.1-10+deb12u6
 
 # Not managed by renovate, because no available datasource
