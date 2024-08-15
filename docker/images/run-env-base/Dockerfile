@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 FROM debian:12-slim
 
-# renovate: datasource=repology depName=debian_12/openjdk-17-jre versioning=loose
+# renovate: datasource=repology depName=debian_12/openjdk-17 versioning=loose
 ENV OPENJDK_17_JRE_VERSION=17.0.12+7-2~deb12u1
 # renovate: datasource=repology depName=debian_12/nodejs versioning=loose
 ENV NODEJS_VERSION=18.19.0+dfsg-6~deb12u2
@@ -11,17 +11,17 @@ ENV NPM_VERSION=9.2.0~ds1-1
 ENV PYTHON3_PIP_VERSION=23.0.1+dfsg-1
 # renovate: datasource=repology depName=debian_12/sqlite3 versioning=loose
 ENV SQLITE3_VERSION=3.40.1-2
-# renovate: datasource=repology depName=debian_12/libboost-program-options1.74.0 versioning=loose
+# renovate: datasource=repology depName=debian_12/boost1.74 versioning=loose
 ENV LIBBOOST_PROGRAM_OPTIONS1_74_0_VERSION=1.74.0+ds1-21
-# renovate: datasource=repology depName=debian_12/libboost-log1.74.0 versioning=loose
+# renovate: datasource=repology depName=debian_12/boost1.74 versioning=loose
 ENV LIBBOOST_LOG1_74_0_VERSION=1.74.0+ds1-21
-# renovate: datasource=repology depName=debian_12/libboost-chrono1.74.0 versioning=loose
+# renovate: datasource=repology depName=debian_12/boost1.74 versioning=loose
 ENV LIBBOOST_CHRONO1_74_0_VERSION=1.74.0+ds1-21
-# renovate: datasource=repology depName=debian_12/libboost-system1.74.0 versioning=loose
+# renovate: datasource=repology depName=debian_12/boost1.74 versioning=loose
 ENV LIBBOOST_SYSTEM1_74_0_VERSION=1.74.0+ds1-21
-# renovate: datasource=repology depName=debian_12/libssl3 versioning=loose
+# renovate: datasource=repology depName=debian_12/openssl versioning=loose
 ENV LIBSSL3_VERSION=3.0.13-1~deb12u1
-# renovate: datasource=repology depName=debian_12/libcurl4 versioning=loose
+# renovate: datasource=repology depName=debian_12/curl versioning=loose
 ENV LIBCURL4_VERSION=7.88.1-10+deb12u5
 # renovate: datasource=repology depName=debian_12/libcap2 versioning=loose
 ENV LIBCAP2_VERSION=1:2.66-4
@@ -29,7 +29,7 @@ ENV LIBCAP2_VERSION=1:2.66-4
 ENV LESS_VERSION=590-2.1~deb12u2
 # renovate: datasource=repology depName=debian_12/python3-pydantic versioning=loose
 ENV PYTHON3_PYDANTIC_VERSION=1.10.4-1
-# renovate: datasource=repology depName=debian_12/python3-cryptography versioning=loose
+# renovate: datasource=repology depName=debian_12/python-cryptography versioning=loose
 ENV PYTHON3_CRYPTOGRAPHY_VERSION=38.0.4-3
 # renovate: datasource=repology depName=debian_12/python3-netifaces versioning=loose
 ENV PYTHON3_NETIFACES_VERSION=0.11.0-2+b1
