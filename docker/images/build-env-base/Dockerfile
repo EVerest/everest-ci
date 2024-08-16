@@ -10,7 +10,7 @@ ENV CURL_VERSION=7.88.1-10+deb12u5
 ENV RSYNC_VERSION=3.2.7-1
 # renovate: datasource=repology depName=debian_12/ninja-build versioning=loose
 ENV NINJA_BUILD_VERSION=1.11.1-1
-# renovate: datasource=repology depName=debian_12/make versioning=loose
+# renovate: datasource=repology depName=debian_12/make-dfsg versioning=loose
 ENV MAKE_VERSION=4.3-4.1
 # renovate: datasource=repology depName=debian_12/cmake versioning=loose
 ENV CMAKE_VERSION=3.25.1-1
@@ -55,13 +55,13 @@ RUN ln -s /usr/bin/clang-format-15 /usr/bin/clang-format \
 
 COPY run-clang-format.py /usr/bin/run-clang-format
 
-# renovate: datasource=repology depName=debian_12/libboost-all-dev versioning=loose
+# renovate: datasource=repology depName=debian_12/boost-defaults versioning=loose
 ENV LIBBOOST_ALL_DEV_VERSION=1.74.0.3
 # renovate: datasource=repology depName=debian_12/libsqlite3-dev versioning=loose
 ENV LIBSQLITE3_DEV_VERSION=3.40.1-2
-# renovate: datasource=repology depName=debian_12/libssl-dev versioning=loose
+# renovate: datasource=repology depName=debian_12/openssl versioning=loose
 ENV LIBSSL_DEV_VERSION=3.0.13-1~deb12u1
-# renovate: datasource=repology depName=debian_12/libnode-dev versioning=loose
+# renovate: datasource=repology depName=debian_12/nodejs versioning=loose
 ENV LIBNODE_DEV_VERSION=18.19.0+dfsg-6~deb12u2
 # renovate: datasource=repology depName=debian_12/pkg-config versioning=loose
 ENV PKG_CONFIG_VERSION=1.8.1-1
@@ -73,7 +73,7 @@ ENV LIBCAP_DEV_VERSION=1:2.66-4
 ENV PYTHON3_VENV_VERSION=3.11.2-1+b1
 # renovate: datasource=repology depName=debian_12/python3-build versioning=loose
 ENV PYTHON3_BUILD_VERSION=0.9.0-1
-# renovate: datasource=repology depName=debian_12/python3-sphinx versioning=loose
+# renovate: datasource=repology depName=debian_12/sphinx versioning=loose
 ENV PYTHON3_SPHINX_VERSION=5.3.0-4
 
 # additional packages

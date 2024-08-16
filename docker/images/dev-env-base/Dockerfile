@@ -21,7 +21,7 @@ ENV WGET_VERSION=1.21.3-1+b2
 ENV DOXYGEN_VERSION=1.9.4-4
 # renovate: datasource=repology depName=debian_12/graphviz versioning=loose
 ENV GRAPHVIZ_VERSION=2.42.2-7+b3
-# renovate: datasource=repology depName=debian_12/build-essential versioning=loose
+# renovate: datasource=repology depName=debian_12/build-essential-mipsen versioning=loose
 ENV BUILD_ESSENTIAL_VERSION=12.9
 # renovate: datasource=repology depName=debian_12/cppcheck versioning=loose
 ENV CPPCHECK_VERSION=2.10-2
