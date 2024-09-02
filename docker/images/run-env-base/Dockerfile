@@ -30,7 +30,7 @@ ENV LESS_VERSION=590-2.1~deb12u2
 # renovate: datasource=repology depName=debian_12/python3-pydantic versioning=loose
 ENV PYTHON3_PYDANTIC_VERSION=1.10.4-1
 # renovate: datasource=repology depName=debian_12/python-cryptography versioning=loose
-ENV PYTHON3_CRYPTOGRAPHY_VERSION=38.0.4-3
+ENV PYTHON3_CRYPTOGRAPHY_VERSION=38.0.4-3~deb12u1
 # renovate: datasource=repology depName=debian_12/python3-netifaces versioning=loose
 ENV PYTHON3_NETIFACES_VERSION=0.11.0-2+b1
 # renovate: datasource=repology depName=debian_12/python3-psutil versioning=loose
