@@ -5,7 +5,7 @@ FROM ghcr.io/everest/everest-ci/run-env-base:${BASE_IMAGE_TAG}
 # renovate: datasource=repology depName=debian_12/git versioning=loose
 ENV GIT_VERSION=1:2.39.2-1.1
 # renovate: datasource=repology depName=debian_12/curl versioning=loose
-ENV CURL_VERSION=7.88.1-10+deb12u5
+ENV CURL_VERSION=7.88.1-10+deb12u7
 # renovate: datasource=repology depName=debian_12/rsync versioning=loose
 ENV RSYNC_VERSION=3.2.7-1
 # renovate: datasource=repology depName=debian_12/ninja-build versioning=loose
