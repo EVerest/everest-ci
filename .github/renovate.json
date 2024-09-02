@@ -34,6 +34,7 @@
   "packageRules": [
     {
       "description": "Group all debian_12 dependencies in Dockerfiles",
+      "groupName": "docker_debian_12",
       "matchFileNames": [
         "(^|/|\\.)Dockerfile$",
         "(^|/)Dockerfile\\.[^/]*$"
@@ -47,6 +48,7 @@
     },
     {
       "description": "Group all pypi dependencies in Dockerfiles",
+      "groupName": "docker_pypi",
       "matchFileNames": [
         "(^|/|\\.)Dockerfile$",
         "(^|/)Dockerfile\\.[^/]*$"
@@ -57,6 +59,7 @@
     },
     {
       "description": "Group all deps in workflow files",
+      "groupName": "workflow",
       "matchManagers": [
         "github-actions"
       ]
