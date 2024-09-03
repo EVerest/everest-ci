@@ -52,7 +52,7 @@ RUN apt update \
 # renovate: datasource=pypi depName=esbonio
 ENV ESBONIO_VERSION=0.16.4
 # renovate: datasource=pypi depName=doc8
-ENV DOC8_VERSION=1.1.1
+ENV DOC8_VERSION=1.1.2
 
 # Development Tools - Documentation
 RUN python3 -m pip install --break-system-packages \
