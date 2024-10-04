@@ -1,0 +1,76 @@
+name: 'Deploy CI Artifact'
+description: 'Deploy CI artifact to a github pages repository'
+inputs:
+  target_repo:
+    description: 'Repository to deploy artifact to'
+    required: true
+  github_token:
+    description: 'Github token, with write access to the target repository'
+    required: true
+  source_repo:
+    description: 'Repository to deploy artifact from'
+    required: true
+    default: ${{ github.repository }}
+  workflow_run_id:
+    description: 'Workflow run id to deploy logs from'
+    required: true
+    default: ${{ github.run_id }}
+  deploy_global_artifact:
+    description: 'Deploy global artifact, without workflow_run_id'
+    required: false
+    default: false
+  artifact_name:
+    description: 'Name of the artifact to deploy'
+    required: true
+  artifact_directory:
+    description: 'Directory or containing the artifact to deploy'
+    required: true
+outputs:
+  deployed_path:
+    description: 'Path to the deployed logs'
+    value: ${{ steps.determine_target_path.outputs.target_path }}
+runs:
+  using: "composite"
+  steps:
+    - name: Configure git
+      shell: bash
+      run: |
+        git config --global user.email "compiler@pionix.de"
+        git config --global user.name "Github Service Account"
+    - name: Checkout target repository
+      uses: actions/checkout@v3.0.0
+      with:
+        repository: ${{ inputs.target_repo }}
+        path: gh-pages-repo
+        token: ${{ inputs.github_token }}
+        ref: main
+    - name: Determine target path
+      id: determine_target_path
+      shell: bash
+      run: |
+        if [ "${{ inputs.deploy_global_artifact }}" = "true" ]; then
+          target_path="ci-artifacts/${{ inputs.source_repo }}/${{ inputs.artifact_name }}"
+        else
+          target_path="ci-artifacts/${{ inputs.source_repo }}/${{ inputs.workflow_run_id }}/${{ inputs.artifact_name }}"
+        fi
+        echo "target_path=$target_path" >> $GITHUB_OUTPUT
+    - name: Copy Artifact
+      shell: bash
+      run: |
+        mkdir -p gh-pages-repo/docs/${{ steps.determine_target_path.outputs.target_path }}
+        if [ "${{ inputs.deploy_global_artifact }}" = "true" ]; then
+          rm -rf gh-pages-repo/docs/${{ steps.determine_target_path.outputs.target_path }}/*
+        fi
+        cp -r ${{ inputs.artifact_directory }}/* gh-pages-repo/docs/${{ steps.determine_target_path.outputs.target_path }}
+    - name: Commit and push logs
+      shell: bash
+      run: |
+        git add docs/${{ steps.determine_target_path.outputs.target_path }}
+        if [ "${{ inputs.deploy_global_artifact }}" = "true" ]; then
+          commit_message="Deploy global artifact and remove old one: ${{ inputs.source_repo }}/${{ inputs.artifact_name }}"
+        else
+          commit_message="Deploy new artifact: ${{ inputs.source_repo }}/${{ inputs.workflow_run_id }}/${{ inputs.artifact_name }}"
+        fi
+        git commit -m "$commit_message" --allow-empty
+        git push
+      working-directory: gh-pages-repo
