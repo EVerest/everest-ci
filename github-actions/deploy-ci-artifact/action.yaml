@@ -71,6 +71,6 @@ runs:
         else
           commit_message="Deploy new artifact: ${{ inputs.source_repo }}/${{ inputs.workflow_run_id }}/${{ inputs.artifact_name }}"
         fi
-        git commit -m "$commit_message" --allow-empty
+        git diff-index --quiet HEAD || git commit -m "$commit_message"
         git push
       working-directory: gh-pages-repo
