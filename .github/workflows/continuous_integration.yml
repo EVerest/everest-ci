@@ -1,0 +1,535 @@
+# This workflow requires the following:
+#  - A build-kit-<repository-name> docker image
+#    - which is built from the `inputs.build_kit_docker_directory` directory
+#  - A build-kit/scripts directory
+#    - which is defined by `inputs.build_kit_scripts_directory`
+#    - with the following scripts:
+#      - compile.sh
+#      - run_unit_tests.sh (optional, but required if `inputs.run_unit_tests` is true)
+#        - This script should run the unit tests
+#          and output the results to `inputs.ctest_report_path`
+#      - run_coverage.sh (optional, but required if `inputs.run_coverage` is true)
+#        - This script should run the coverage tests 
+#          and output the results to `inputs.coverage_report_path`
+#      - install.sh (optional, but required if `inputs.run_install` is true)
+#        - This script should create the dist directory
+#          and output it to `inputs.dist_path`
+#      - install_wheels.sh (optional, but required if `inputs.run_install_wheels` is true)
+#        - This script should create the wheels directory
+#          and output it to `inputs.wheels_path`
+#      - create_integration_image.sh (optional, but required if `inputs.run_integration_tests` is true)
+#        - This script should create the integration image
+#          by installing additional dependencies, for example wheel files
+#      - run_integration_tests.sh (optional, but required if `inputs.run_integration_tests` is true)
+#        - This script should run the integration tests
+#          and output the results to `inputs.result_xml_path` and `inputs.report_html_path`
+#    - During the build, the `github.workspace` directory is mounted to `/ext`,
+#      which is stored in the environment variable `$EXT_MOUNT`
+#    - The repository is checked out to `$EXT_MOUNT/source`
+# - A docker-compose file with the services required for integration tests
+#   - which is defined by `inputs.docker_compose_file_path`
+# - A service in the docker-compose file with the name `inputs.test_service_name`,
+#   which uses the `inputs.integration_image_name` image
+
+
+name: Continuous Integration
+
+on:
+  workflow_call:
+    inputs:
+      # General inputs
+      runner:
+        description: 'Which runner to use'
+        required: false
+        default: 'ubuntu-22.04'
+        type: string
+      artifact_deploy_target_repo:
+        description: 'Repository to deploy artifacts to'
+        required: true
+        type: string
+      # Enviroment inputs
+      docker_registry:
+        description: 'The docker registry to use'
+        required: false
+        default: 'ghcr.io'
+        type: string
+      # Lint inputs
+      lint_source_dir:
+        description: 'The directory to run clang-format on, relative to the repository root'
+        required: false
+        default: '.'
+        type: string
+      lint_extensions:
+        description: 'The file extensions to run clang-format on'
+        required: false
+        default: 'hpp,cpp'
+        type: string
+      lint_exclude:
+        description: 'The directories to exclude from clang-format'
+        required: false
+        default: 'cache'
+        type: string
+      # Build kit inputs
+      build_kit_docker_directory:
+        description: 'The directory to build the build kit from, relative to the repository root'
+        required: false
+        default: '.ci/build-kit/docker'
+        type: string
+      build_kit_scripts_directory:
+        description: 'The directory to find the build kit scripts in, relative to the repository root'
+        required: false
+        default: '.ci/build-kit/scripts'
+        type: string
+      # Build inputs
+      ctest_report_path:
+        description: 'The path to the ctest report, relative to the github workspace'
+        required: false
+        default: 'build/Testing/Temporary/LastTest.log'
+        type: string
+      coverage_report_path:
+        description: 'The path to the coverage report, relative to the github workspace'
+        required: false
+        default: 'build/gcovr-coverage'
+        type: string
+      coverage_xml_path:
+        description: 'The path to the coverage xml, relative to the github workspace'
+        required: false
+        default: 'build/coverage.xml'
+        type: string
+      dist_path:
+        description: 'The path to the dist directory, relative to the github workspace'
+        required: false
+        default: 'dist'
+        type: string
+      wheels_path:
+        description: 'The path to the wheels directory, relative to the github workspace'
+        required: false
+        default: 'wheels'
+        type: string
+      use_build_cache:
+        description: 'Use build cache'
+        required: false
+        default: 'true'
+        type: string
+      # Integration test inputs
+      docker_compose_file_path:
+        description: 'The path to the docker-compose file, relative to the repository root'
+        required: false
+        default: '.ci/e2e/docker-compose.yml'
+        type: string
+      integration_image_name:
+        description: 'The name of the integration image'
+        required: false
+        default: 'integration-image'
+        type: string
+      test_service_name:
+        description: 'The name of the service to run integration tests on'
+        required: false
+        default: 'e2e-test-server'
+        type: string
+      result_xml_path:
+        description: 'The path to the result xml file, relative to the github workspace'
+        required: false
+        default: 'result.xml'
+        type: string
+      report_html_path:
+        description: 'The path to the report html file, relative to the github workspace'
+        required: false
+        default: 'report.html'
+        type: string
+      # Workflow control inputs
+      run_lint:
+        description: 'Run linting'
+        required: false
+        default: 'true'
+        type: string
+      run_unit_tests:
+        description: 'Run unit tests'
+        required: false
+        default: 'true'
+        type: string
+      run_coverage:
+        description: 'Run coverage'
+        required: false
+        default: 'true'
+        type: string
+      do_not_run_coverage_badge_creation:
+        description: 'Do not run coverage badge creation'
+        required: false
+        default: 'false'
+        type: string
+      run_install:
+        description: 'Run install'
+        required: false
+        default: 'true'
+        type: string
+      run_install_wheels:
+        description: 'Run install wheels'
+        required: false
+        default: 'false'
+        type: string
+      run_integration_tests:
+        description: 'Run integration tests'
+        required: false
+        default: 'false'
+        type: string
+    secrets:
+      coverage_deploy_token:
+        description: 'The token to use to deploy the coverage report'
+        required: true
+
+jobs:
+  lint:
+    name: Lint Repository
+    needs:
+      - setup-env
+    runs-on: ${{ inputs.runner }}
+    if: ${{ inputs.run_lint == 'true' }}
+    steps:
+      - name: Checkout local github actions
+        uses: actions/checkout@v3
+        with:
+          repository: everest/everest-ci
+          ref: ${{ needs.setup-env.outputs.sha_everest_ci }}
+          path: everest-ci
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          path: source
+      - name: Run clang-format
+        uses: ./everest-ci/github-actions/run-clang-format
+        with:
+          source-dir: source/${{ inputs.lint_source_dir }}
+          extensions: ${{ inputs.lint_extensions }}
+          exclude: ${{ inputs.lint_exclude }}
+  
+  # Since env variables can't be passed to reusable workflows, we need to pass them as outputs
+  setup-env:
+    name: Setup Environment
+    runs-on: ${{ inputs.runner }}
+    outputs:
+      workflow_path: ${{ steps.set_workflow_path.outputs.workflow_path }}
+      sha_everest_ci: ${{ steps.set_sha_everest_ci.outputs.sha }}
+      tag_everest_ci: ${{ steps.set_tag_everest_ci.outputs.latest_tag }}
+    steps:
+      - name: Determine workflow_path
+        id: set_workflow_path
+        shell: python3 {0}
+        run: |
+          import os
+          workflow_path = "${{ github.workflow_ref }}".split('@')[0].split('/', 2)[-1]
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"workflow_path={workflow_path}\n")
+          print(f"Set output workflow_path to {workflow_path}")
+      - name: Determine SHA of the reusable workflow
+        id: set_sha_everest_ci
+        uses: canonical/get-workflow-version-action@v1.0.0
+        with:
+          repository-name:  everest/everest-ci
+          file-name: continuous_integration.yml
+      - name: Determine latest tag of everest-ci
+        id: set_tag_everest_ci
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TARGET_SHA="${{ steps.set_sha_everest_ci.outputs.sha }}"
+          OWNER="everest"
+          REPO="everest-ci"
+
+          COMMITS=$(gh api repos/$OWNER/$REPO/commits?sha=$TARGET_SHA\&per_page=100 --jq '.[].sha')
+          for COMMIT in $COMMITS; do
+            TAG=$(gh api repos/$OWNER/$REPO/tags --jq '.[] | select(.commit.sha == "'$COMMIT'") | .name')
+            if [ -n "$TAG" ]; then
+              break
+            fi
+          done
+
+          if [ -z "$TAG" ]; then
+            echo "No tag found for commit $TARGET_SHA (only last 100 commits were checked)"
+            exit 1
+          fi
+
+          echo "latest_tag=$TAG" >> $GITHUB_OUTPUT
+  
+  build-and-push-build-kit:
+    name: Build and Push Build Kit
+    uses: everest/everest-ci/.github/workflows/deploy-single-docker-image.yml@v1.3.1
+    needs:
+      - setup-env
+    permissions:
+      contents: read
+      packages: write
+    secrets:
+      SA_GITHUB_USERNAME: ${{ github.actor }}
+      SA_GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      image_name: ${{ github.event.repository.name }}/build-kit-${{ github.event.repository.name }}
+      directory: ${{ inputs.build_kit_docker_directory}}
+      docker_registry: ${{ inputs.docker_registry }}
+      github_ref_before: ${{ github.event.before }}
+      github_ref_after: ${{ github.event.after }}
+      platforms: linux/amd64
+      depends_on_paths: |
+        ${{ inputs.build_kit_scripts_directory }}
+        ${{ needs.setup-env.outputs.workflow_path }}
+      build_args: |
+        BASE_IMAGE_TAG=${{ needs.setup-env.outputs.tag_everest_ci }}
+  
+  build:
+    name: Build, Unit Tests and Install
+    needs:
+      - setup-env
+      - build-and-push-build-kit
+    runs-on: ${{ inputs.runner }}
+    env:
+      BUILD_KIT_IMAGE: ${{ needs.build-and-push-build-kit.outputs.one_image_tag_long }}
+    steps:
+      - name: Checkout local github actions
+        uses: actions/checkout@v3
+        with:
+          repository: everest/everest-ci
+          ref: ${{ needs.setup-env.outputs.sha_everest_ci }}
+          path: everest-ci
+      - name: Format branch name for cache key
+        if: ${{ inputs.use_build_cache == 'true' }}
+        run: |
+          BRANCH_NAME_FOR_CACHE="${GITHUB_REF_NAME//-/_}"
+          echo "branch_name_for_cache=${BRANCH_NAME_FOR_CACHE}" >> "$GITHUB_ENV"
+      - name: Setup cache
+        if: ${{ inputs.use_build_cache == 'true' }}
+        uses: actions/cache@v3
+        with:
+          path: cache
+          key: compile-${{ env.branch_name_for_cache }}-${{ github.sha }}
+          restore-keys: |
+            compile-${{ env.branch_name_for_cache }}-
+            compile-
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          path: source
+      - name: Setup run scripts
+        run: |
+          mkdir scripts
+          rsync -a source/${{ inputs.build_kit_scripts_directory }}/ scripts
+      - name: Pull build-kit image
+        run: |
+          docker pull --quiet ${{ env.BUILD_KIT_IMAGE }}
+          docker image tag ${{ env.BUILD_KIT_IMAGE }} build-kit
+      - name: Compile
+        run: |
+          docker run \
+          --volume "${{ github.workspace }}:/ext" \
+          --name compile-container \
+          build-kit run-script compile
+      - name: Run unit tests
+        id: run_unit_tests
+        if: ${{ inputs.run_unit_tests == 'true' }}
+        run: |
+          docker run \
+          --volume "${{ github.workspace }}:/ext" \
+          --name unit-test-container \
+          build-kit run-script run_unit_tests
+      - name: Archive test results
+        if: ${{ steps.run_unit_tests.outcome == 'success' || steps.run_unit_tests.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          if-no-files-found: error
+          name: ctest-report
+          path: ${{ inputs.ctest_report_path }}
+      - name: Run coverage
+        id: run_coverage
+        if: ${{ inputs.run_coverage == 'true' }}
+        run: |
+          docker run \
+          --volume "${{ github.workspace }}:/ext" \
+          --name coverage-container \
+          build-kit run-script run_coverage
+      - name: Archive coverage report
+        if: ${{ steps.run_coverage.outcome == 'success' || steps.run_coverage.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          if-no-files-found: error
+          name: coverage-report
+          path: ${{ inputs.coverage_report_path }}
+      - name: Archive coverage xml
+        if: ${{ steps.run_coverage.outcome == 'success' || steps.run_coverage.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          if-no-files-found: error
+          name: coverage-xml
+          path: ${{ inputs.coverage_xml_path}}
+      - name: Deploy html coverage report
+        id: deploy_coverage_report
+        if: ${{ steps.run_coverage.outcome == 'success' || steps.run_coverage.outcome == 'failure' }}
+        uses: ./everest-ci/github-actions/deploy-ci-artifact
+        with:
+          target_repo: ${{ inputs.artifact_deploy_target_repo }}
+          github_token: ${{ secrets.coverage_deploy_token }}
+          artifact_name: coverage-report
+          artifact_directory: ${{ inputs.coverage_report_path }}
+      - name: Write summary coverage
+        if: ${{ steps.run_coverage.outcome == 'success' || steps.run_coverage.outcome == 'failure' }}
+        run: |
+          echo "Coverage report deployed to: [everest.github.io](https://everest.github.io/${{ steps.deploy_coverage_report.outputs.deployed_path }})" >> $GITHUB_STEP_SUMMARY
+      - name: Create dist
+        id: create_dist
+        if: ${{ inputs.run_install == 'true' }}
+        run: |
+          docker run \
+          --volume "${{ github.workspace }}:/ext" \
+          --name dist-container \
+          build-kit run-script install
+      - name: Tar dist dir and keep permissions
+        if: ${{ steps.create_dist.outcome == 'success' || steps.create_dist.outcome == 'failure' }}
+        run: |
+          tar -czf dist.tar.gz dist
+      - name: Upload dist artifact
+        if: ${{ steps.create_dist.outcome == 'success' || steps.create_dist.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          if-no-files-found: error
+          path: dist.tar.gz
+          name: dist
+      - name: Create wheels
+        id: create_wheels
+        if: ${{ inputs.run_install_wheels == 'true' }}
+        run: |
+          docker run \
+          --volume "${{ github.workspace }}:/ext" \
+          --name wheels-container \
+          build-kit run-script install_wheels
+      - name: Upload wheels artifact
+        if: ${{ steps.create_wheels.outcome == 'success' || steps.create_wheels.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          if-no-files-found: error
+          path: ${{ inputs.wheels_path }}
+          name: wheels
+  integration-tests:
+    name: Integration Tests
+    needs:
+      - setup-env
+      - build
+      - build-and-push-build-kit
+    env:
+      BUILD_KIT_IMAGE: ${{ needs.build-and-push-build-kit.outputs.one_image_tag_long }}
+    runs-on: ${{ inputs.runner }}
+    if: ${{ inputs.run_integration_tests == 'true' }}
+    steps:
+      - name: Download dist dir
+        uses: actions/download-artifact@v4.1.2
+        with:
+          name: dist
+      - name: Extract dist.tar.gz
+        run: |
+          tar -xzf ${{ github.workspace }}/dist.tar.gz -C ${{ github.workspace }}
+      - name: Download wheels
+        if: ${{ inputs.run_install_wheels == 'true' }}
+        uses: actions/download-artifact@v4.1.2
+        with:
+          name: wheels
+          path: wheels
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.6
+        with:
+          path: source
+      - name: Setup run scripts
+        run: |
+          mkdir scripts
+          rsync -a source/${{ inputs.build_kit_scripts_directory }}/ scripts
+      - name: Pull build-kit image
+        run: |
+          docker pull --quiet ${{ env.BUILD_KIT_IMAGE }}
+          docker image tag ${{ env.BUILD_KIT_IMAGE }} build-kit
+      - name: Create integration-image
+        run: |
+          docker run \
+          --volume "${{ github.workspace }}:/ext" \
+          --name integration-container \
+          build-kit run-script create_integration_image
+          docker commit integration-container ${{ inputs.integration_image_name }}
+      - name: Run integration tests
+        id: run_integration_tests
+        run: |
+          docker compose run \
+          -f source/${{ inputs.docker_compose_file_path }} \
+          ${{ inputs.test_service_name }} \
+          run-script run_integration_tests
+      - name: Upload result and report as artifact
+        if: ${{ steps.run_integration_tests.outcome == 'success' || steps.run_integration_tests.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          if-no-files-found: error
+          name: integration-test-report
+          path:
+            ${{ inputs.result_xml_path }}
+            ${{ inputs.report_html_path }}
+      - name: Render result
+        if: ${{ steps.run_integration_tests.outcome == 'success' || steps.run_integration_tests.outcome == 'failure' }}
+        uses: pmeier/pytest-results-action@v0.6.0
+        with:
+          path: ${{ inputs.result_xml_path }}
+          summary: True
+          display-options: fEX
+          fail-on-empty: True
+          title: Test results
+  create_coverage_badge:
+    name: Create Coverage Badge
+    needs:
+      - setup-env
+      - build
+    runs-on: ${{ inputs.runner }}
+    if: ${{ inputs.run_coverage && inputs.do_not_run_coverage_badge_creation == 'false' && inputs.run_coverage == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Checkout local github actions
+        uses: actions/checkout@v3
+        with:
+          repository: everest/everest-ci
+          ref: ${{ needs.setup-env.outputs.sha_everest_ci }}
+          path: everest-ci
+      - name: Download xml coverage report
+        uses: actions/download-artifact@v4.1.2
+        with:
+          if-no-files-found: error
+          name: coverage-xml
+          path: coverage-xml
+      - name: Parse coverage report
+        id: parse_coverage_report
+        shell: python3 {0}
+        run: |
+          import xml.etree.ElementTree
+          import os
+          tree = xml.etree.ElementTree.parse("${{ github.workspace }}/coverage-xml/gcovr-coverage-xml.xml")
+          line_coverage = tree.getroot().get("line-rate")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"line_coverage={line_coverage}\n")
+              f.write(f"line_coverage_percentage={float(line_coverage) * 100}\n")
+      - name: Generate coverage badge
+        run: |
+          pip install anybadge
+          mkdir -p ${{ github.workspace }}/coverage-badge/
+          anybadge -o --label Coverage --value ${{ steps.parse_coverage_report.outputs.line_coverage_percentage }} -s "%" --file ${{ github.workspace }}/coverage-badge/coverage-badge.svg 20=red 40=orange 60=yellow 80=yellowgreen 100=green
+      - name: Deploy coverage badge
+        uses: ./everest-ci/github-actions/deploy-ci-artifact
+        with:
+          target_repo: ${{ inputs.artifact_deploy_target_repo }}
+          github_token: ${{ secrets.coverage_deploy_token }}
+          artifact_name: coverage-badge
+          artifact_directory: ${{ github.workspace }}/coverage-badge/
+          deploy_global_artifact: true
+      - name: Download html coverage report
+        uses: actions/download-artifact@v4.1.2
+        with:
+          if-no-files-found: error
+          name: coverage-report
+          path: coverage-report
+      - name: Deploy html coverage report
+        uses: ./everest-ci/github-actions/deploy-ci-artifact
+        with:
+          target_repo: ${{ inputs.artifact_deploy_target_repo }}
+          github_token: ${{ secrets.coverage_deploy_token }}
+          artifact_name: coverage-report
+          artifact_directory: ${{ github.workspace }}/coverage-report/
+          deploy_global_artifact: true
