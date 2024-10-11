@@ -29,7 +29,7 @@ jobs:
   env-setup:
     # Since env variables can't be passed to reusable workflows, we need to pass them as outputs
     name: Evaluate force rebuild and set env variables as outputs
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
       force_rebuild: ${{ steps.check.outputs.force_rebuild }}
       docker_registry: ${{ env.REGISTRY }}
