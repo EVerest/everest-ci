@@ -253,7 +253,7 @@ jobs:
   
   build-and-push-build-kit:
     name: Build and Push Build Kit
-    uses: everest/everest-ci/.github/workflows/deploy-single-docker-image.yml@v1.3.1
+    uses: everest/everest-ci/.github/workflows/deploy-single-docker-image.yml@v1.3.3
     needs:
       - setup-env
     permissions:
@@ -386,7 +386,7 @@ jobs:
           tar -czf dist.tar.gz dist
       - name: Upload dist artifact
         if: ${{ steps.create_dist.outcome == 'success' || steps.create_dist.outcome == 'failure' }}
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@v4.4.3
         with:
           if-no-files-found: error
           path: dist.tar.gz
@@ -401,7 +401,7 @@ jobs:
           build-kit run-script install_wheels
       - name: Upload wheels artifact
         if: ${{ steps.create_wheels.outcome == 'success' || steps.create_wheels.outcome == 'failure' }}
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@v4.4.3
         with:
           if-no-files-found: error
           path: ${{ inputs.wheels_path }}
@@ -418,7 +418,7 @@ jobs:
     if: ${{ inputs.run_integration_tests == 'true' }}
     steps:
       - name: Download dist dir
-        uses: actions/download-artifact@v4.1.2
+        uses: actions/download-artifact@v4.1.8
         with:
           name: dist
       - name: Extract dist.tar.gz
@@ -426,12 +426,12 @@ jobs:
           tar -xzf ${{ github.workspace }}/dist.tar.gz -C ${{ github.workspace }}
       - name: Download wheels
         if: ${{ inputs.run_install_wheels == 'true' }}
-        uses: actions/download-artifact@v4.1.2
+        uses: actions/download-artifact@v4.1.8
         with:
           name: wheels
           path: wheels
       - name: Checkout repository
-        uses: actions/checkout@v4.1.6
+        uses: actions/checkout@v4.2.1
         with:
           path: source
       - name: Setup run scripts
@@ -458,7 +458,7 @@ jobs:
           run-script run_integration_tests
       - name: Upload result and report as artifact
         if: ${{ steps.run_integration_tests.outcome == 'success' || steps.run_integration_tests.outcome == 'failure' }}
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@v4.4.3
         with:
           if-no-files-found: error
           name: integration-test-report
@@ -467,7 +467,7 @@ jobs:
             ${{ inputs.report_html_path }}
       - name: Render result
         if: ${{ steps.run_integration_tests.outcome == 'success' || steps.run_integration_tests.outcome == 'failure' }}
-        uses: pmeier/pytest-results-action@v0.6.0
+        uses: pmeier/pytest-results-action@v0.7.1
         with:
           path: ${{ inputs.result_xml_path }}
           summary: True
@@ -489,7 +489,7 @@ jobs:
           ref: ${{ needs.setup-env.outputs.sha_everest_ci }}
           path: everest-ci
       - name: Download xml coverage report
-        uses: actions/download-artifact@v4.1.2
+        uses: actions/download-artifact@v4.1.8
         with:
           if-no-files-found: error
           name: coverage-xml
@@ -520,7 +520,7 @@ jobs:
           artifact_directory: ${{ github.workspace }}/coverage-badge/
           deploy_global_artifact: true
       - name: Download html coverage report
-        uses: actions/download-artifact@v4.1.2
+        uses: actions/download-artifact@v4.1.8
         with:
           if-no-files-found: error
           name: coverage-report
