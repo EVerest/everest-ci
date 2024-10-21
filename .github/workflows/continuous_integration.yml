@@ -288,7 +288,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: ${{ env.BUILD_ARGS }}
-          tags: ${{ env.BUILD_KIT_IMAGE_NAME }}
+          outputs: type=image,name=${{ env.BUILD_KIT_IMAGE_NAME }}
       - name: Save build-kit image
         run: |
           docker save ${{ env.BUILD_KIT_IMAGE_NAME }} -o build-kit.tar
