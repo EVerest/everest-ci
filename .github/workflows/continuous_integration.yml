@@ -257,7 +257,7 @@ jobs:
     needs:
       - setup-env
     env:
-      BUILD_KIT_IMAGE_NAME: local/build-kit-${{ github.event.repository.name }}:latest
+      BUILD_KIT_IMAGE_NAME: local/build-kit-${{ github.event.repository.name }}
       PLATFORMS: linux/amd64
       BUILD_ARGS: |
         BASE_IMAGE_TAG=${{ needs.setup-env.outputs.tag_everest_ci }}
@@ -289,9 +289,7 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: ${{ env.BUILD_ARGS }}
           tags: ${{ env.BUILD_KIT_IMAGE_NAME }}
-      - name: Save build-kit image
-        run: |
-          docker save ${{ env.BUILD_KIT_IMAGE_NAME }} -o build-kit.tar
+          outputs: type=docker,dest=build-kit.tar
       - name: Upload build-kit image
         uses: actions/upload-artifact@v4
         with:
