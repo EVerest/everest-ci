@@ -282,7 +282,7 @@ jobs:
       - name: Build
         uses: docker/build-push-action@v6
         with:
-          context: ${{ inputs.build_kit_docker_directory }}
+          context: source/${{ inputs.build_kit_docker_directory }}
           push: false
           platforms: ${{ env.PLATFORMS }}
           cache-from: type=gha
