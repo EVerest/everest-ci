@@ -257,7 +257,7 @@ jobs:
     needs:
       - setup-env
     env:
-      BUILD_KIT_IMAGE_NAME: local/build-kit-${{ github.event.repository.name }}
+      BUILD_KIT_IMAGE_NAME: local/build-kit-${{ github.event.repository.name }}:latest
       PLATFORMS: linux/amd64
       BUILD_ARGS: |
         BASE_IMAGE_TAG=${{ needs.setup-env.outputs.tag_everest_ci }}
@@ -288,7 +288,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: ${{ env.BUILD_ARGS }}
-          outputs: type=image,name=${{ env.BUILD_KIT_IMAGE_NAME }}
           tags: ${{ env.BUILD_KIT_IMAGE_NAME }}
       - name: Save build-kit image
         run: |
