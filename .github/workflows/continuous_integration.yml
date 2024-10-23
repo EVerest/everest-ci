@@ -187,13 +187,13 @@ jobs:
     if: ${{ inputs.run_lint == 'true' }}
     steps:
       - name: Checkout local github actions
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: everest/everest-ci
           ref: ${{ needs.setup-env.outputs.sha_everest_ci }}
           path: everest-ci
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: source
       - name: Run clang-format
@@ -285,7 +285,7 @@ jobs:
       BUILD_KIT_IMAGE: ${{ needs.build-and-push-build-kit.outputs.one_image_tag_long }}
     steps:
       - name: Checkout local github actions
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: everest/everest-ci
           ref: ${{ needs.setup-env.outputs.sha_everest_ci }}
@@ -297,7 +297,7 @@ jobs:
           echo "branch_name_for_cache=${BRANCH_NAME_FOR_CACHE}" >> "$GITHUB_ENV"
       - name: Setup cache
         if: ${{ inputs.use_build_cache == 'true' }}
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: cache
           key: compile-${{ env.branch_name_for_cache }}-${{ github.sha }}
@@ -305,7 +305,7 @@ jobs:
             compile-${{ env.branch_name_for_cache }}-
             compile-
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: source
       - name: Setup run scripts
@@ -483,7 +483,7 @@ jobs:
     if: ${{ inputs.run_coverage && inputs.do_not_run_coverage_badge_creation == 'false' && inputs.run_coverage == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout local github actions
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: everest/everest-ci
           ref: ${{ needs.setup-env.outputs.sha_everest_ci }}
