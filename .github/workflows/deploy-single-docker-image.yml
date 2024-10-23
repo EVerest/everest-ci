@@ -74,7 +74,7 @@ jobs:
     name: Check for changes
     outputs:
       rebuild: ${{ steps.set-outputs.outputs.rebuild }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - name: Checkout Dockerfile
       if: ${{ inputs.force_rebuild == false }}
@@ -161,7 +161,7 @@ jobs:
   build-and-push:
     name: Build and push
     needs: check
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
       image_tags: ${{ steps.meta.outputs.tags }}
       one_image_tag_short: ${{ steps.extract-one-tag.outputs.tag_short }}
