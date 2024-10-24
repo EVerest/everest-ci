@@ -48,6 +48,11 @@ on:
         description: 'Build arguments for the Dockerfile'
         required: false
         type: string
+      runner:
+        description: 'Runner to use'
+        required: false
+        default: 'ubuntu-22.04'
+        type: string
     outputs:
       rebuild:
         description: 'Whether the image is rebuilt or not'
@@ -74,7 +79,7 @@ jobs:
     name: Check for changes
     outputs:
       rebuild: ${{ steps.set-outputs.outputs.rebuild }}
-    runs-on: ubuntu-22.04
+    runs-on: ${{ inputs.runner }}
     steps:
     - name: Checkout Dockerfile
       if: ${{ inputs.force_rebuild == false }}
@@ -161,7 +166,7 @@ jobs:
   build-and-push:
     name: Build and push
     needs: check
-    runs-on: ubuntu-22.04
+    runs-on: ${{ inputs.runner }}
     outputs:
       image_tags: ${{ steps.meta.outputs.tags }}
       one_image_tag_short: ${{ steps.extract-one-tag.outputs.tag_short }}
