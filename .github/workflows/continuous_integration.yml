@@ -276,6 +276,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.BUILD_KIT_IMAGE_NAME }}
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v3
       - name: Build
         uses: docker/build-push-action@v6
         with:
