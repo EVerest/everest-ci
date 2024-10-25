@@ -115,7 +115,7 @@ on:
       docker_compose_file_path:
         description: 'The path to the docker-compose file, relative to the repository root'
         required: false
-        default: '.ci/e2e/docker-compose.yml'
+        default: '.ci/e2e/docker-compose.yaml'
         type: string
       integration_image_name:
         description: 'The name of the integration image'
