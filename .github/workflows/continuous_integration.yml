@@ -504,7 +504,7 @@ jobs:
         with:
           if-no-files-found: error
           name: integration-test-report
-          path:
+          path: |
             ${{ inputs.result_xml_path }}
             ${{ inputs.report_html_path }}
       - name: Render result
