@@ -66,7 +66,7 @@ ENV ENVIRONS_VERSION=11.0.0
 # renovate: datasource=pypi depName=py4j
 ENV PY4J_VERSION=0.10.9.7
 # renovate: datasource=pypi depName=aiofile
-ENV AIOFILE_VERSION=3.8.8
+ENV AIOFILE_VERSION=3.9.0
 
 RUN python3 -m pip install --break-system-packages \
     environs==${ENVIRONS_VERSION} \
