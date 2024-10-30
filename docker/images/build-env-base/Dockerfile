@@ -3,7 +3,7 @@ ARG BASE_IMAGE_TAG=latest
 FROM ghcr.io/everest/everest-ci/run-env-base:${BASE_IMAGE_TAG}
 
 # renovate: datasource=repology depName=debian_12/git versioning=loose
-ENV GIT_VERSION=1:2.39.2-1.1
+ENV GIT_VERSION=1:2.39.5-0+deb12u1
 # renovate: datasource=repology depName=debian_12/curl versioning=loose
 ENV CURL_VERSION=7.88.1-10+deb12u7
 # renovate: datasource=repology depName=debian_12/rsync versioning=loose
@@ -60,7 +60,7 @@ ENV LIBBOOST_ALL_DEV_VERSION=1.74.0.3
 # renovate: datasource=repology depName=debian_12/libsqlite3-dev versioning=loose
 ENV LIBSQLITE3_DEV_VERSION=3.40.1-2
 # renovate: datasource=repology depName=debian_12/openssl versioning=loose
-ENV LIBSSL_DEV_VERSION=3.0.14-1~deb12u1
+ENV LIBSSL_DEV_VERSION=3.0.14-1~deb12u2
 # renovate: datasource=repology depName=debian_12/nodejs versioning=loose
 ENV LIBNODE_DEV_VERSION=18.19.0+dfsg-6~deb12u2
 # renovate: datasource=repology depName=debian_12/pkg-config versioning=loose
@@ -106,7 +106,7 @@ ENV GCOVR_VERSION=7.2
 # renovate: datasource=pypi depName=sphinxcontrib-contentui
 ENV SPHINXCONTRIB_CONTENTUI_VERSION=0.2.5
 # renovate: datasource=pypi depName=sphinxcontrib-svg2pdfconverter
-ENV SPHINXCONTRIB_SVG2PDFCONVERTER_VERSION=1.2.2
+ENV SPHINXCONTRIB_SVG2PDFCONVERTER_VERSION=1.2.3
 
 # Install additional Python packages
 RUN python3 -m pip install --break-system-packages \
