@@ -251,7 +251,7 @@ jobs:
 
           echo "latest_tag=$TAG" >> $GITHUB_OUTPUT
 
-  build-build-kit:
+  build-the-build-kit:
     name: Build build-kit
     runs-on: ${{ inputs.runner }}
     needs:
@@ -312,10 +312,10 @@ jobs:
     name: Build, Unit Tests and Install
     needs:
       - setup-env
-      - build-build-kit
+      - build-the-build-kit
     runs-on: ${{ inputs.runner }}
     env:
-      BUILD_KIT_IMAGE: ${{ needs.build-build-kit.outputs.build_kit_image_tag }}
+      BUILD_KIT_IMAGE: ${{ needs.build-the-build-kit.outputs.build_kit_image_tag }}
     steps:
       - name: Checkout local github actions
         uses: actions/checkout@v3
@@ -448,9 +448,9 @@ jobs:
     needs:
       - setup-env
       - build
-      - build-build-kit
+      - build-the-build-kit
     env:
-      BUILD_KIT_IMAGE: ${{ needs.build-build-kit.outputs.build_kit_image_tag }}
+      BUILD_KIT_IMAGE: ${{ needs.build-the-build-kit.outputs.build_kit_image_tag }}
     runs-on: ${{ inputs.runner }}
     if: ${{ inputs.run_integration_tests == 'true' }}
     steps:
