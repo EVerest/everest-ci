@@ -115,7 +115,7 @@ on:
       docker_compose_file_path:
         description: 'The path to the docker-compose file, relative to the repository root'
         required: false
-        default: '.ci/e2e/docker-compose.yml'
+        default: '.ci/e2e/docker-compose.yaml'
         type: string
       integration_image_name:
         description: 'The name of the integration image'
@@ -250,39 +250,72 @@ jobs:
           fi
 
           echo "latest_tag=$TAG" >> $GITHUB_OUTPUT
-  
-  build-and-push-build-kit:
-    name: Build and Push Build Kit
-    uses: everest/everest-ci/.github/workflows/deploy-single-docker-image.yml@v1.3.1
+
+  build-the-build-kit:
+    name: Build build-kit
+    runs-on: ${{ inputs.runner }}
     needs:
       - setup-env
-    permissions:
-      contents: read
-      packages: write
-    secrets:
-      SA_GITHUB_USERNAME: ${{ github.actor }}
-      SA_GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-    with:
-      image_name: ${{ github.event.repository.name }}/build-kit-${{ github.event.repository.name }}
-      directory: ${{ inputs.build_kit_docker_directory}}
-      docker_registry: ${{ inputs.docker_registry }}
-      github_ref_before: ${{ github.event.before }}
-      github_ref_after: ${{ github.event.after }}
-      platforms: linux/amd64
-      depends_on_paths: |
-        ${{ inputs.build_kit_scripts_directory }}
-        ${{ needs.setup-env.outputs.workflow_path }}
-      build_args: |
+    env:
+      BUILD_KIT_IMAGE_NAME: local/build-kit-${{ github.event.repository.name }}
+      BUILD_ARGS: |
         BASE_IMAGE_TAG=${{ needs.setup-env.outputs.tag_everest_ci }}
-  
+    outputs:
+      build_kit_image_tag: ${{ steps.set-outputs.outputs.tag }}
+    steps:
+      - name: Checkout Dockerfile
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}
+          path: source
+          ref: ${{ github.ref }}
+          token: ${{ github.token}}
+          fetch-depth: 0
+      - name: Docker Meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.BUILD_KIT_IMAGE_NAME }}
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          context: source/${{ inputs.build_kit_docker_directory }}
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: ${{ env.BUILD_ARGS }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=docker,dest=build-kit.tar
+      - name: Upload build-kit image
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-kit
+          path: build-kit.tar
+      - name: Set output tag
+        id: set-outputs
+        shell: python3 {0}
+        run: |
+          import os
+          tags = "${{ steps.meta.outputs.tags }}".split(",")
+          if len(tags) == 0:
+            print("No tags found!❌")
+            exit(1)
+          tag = tags[0]
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            f.write(f"tag={tag}\n")
+            print(f"Set tag={tag}")
+
   build:
     name: Build, Unit Tests and Install
     needs:
       - setup-env
-      - build-and-push-build-kit
+      - build-the-build-kit
     runs-on: ${{ inputs.runner }}
     env:
-      BUILD_KIT_IMAGE: ${{ needs.build-and-push-build-kit.outputs.one_image_tag_long }}
+      BUILD_KIT_IMAGE: ${{ needs.build-the-build-kit.outputs.build_kit_image_tag }}
     steps:
       - name: Checkout local github actions
         uses: actions/checkout@v3
@@ -312,9 +345,13 @@ jobs:
         run: |
           mkdir scripts
           rsync -a source/${{ inputs.build_kit_scripts_directory }}/ scripts
-      - name: Pull build-kit image
+      - name: Download build-kit image
+        uses: actions/download-artifact@v4
+        with:
+          name: build-kit
+      - name: Load build-kit image
         run: |
-          docker pull --quiet ${{ env.BUILD_KIT_IMAGE }}
+          docker load -i build-kit.tar
           docker image tag ${{ env.BUILD_KIT_IMAGE }} build-kit
       - name: Compile
         run: |
@@ -411,9 +448,9 @@ jobs:
     needs:
       - setup-env
       - build
-      - build-and-push-build-kit
+      - build-the-build-kit
     env:
-      BUILD_KIT_IMAGE: ${{ needs.build-and-push-build-kit.outputs.one_image_tag_long }}
+      BUILD_KIT_IMAGE: ${{ needs.build-the-build-kit.outputs.build_kit_image_tag }}
     runs-on: ${{ inputs.runner }}
     if: ${{ inputs.run_integration_tests == 'true' }}
     steps:
@@ -438,9 +475,13 @@ jobs:
         run: |
           mkdir scripts
           rsync -a source/${{ inputs.build_kit_scripts_directory }}/ scripts
-      - name: Pull build-kit image
+      - name: Download build-kit image
+        uses: actions/download-artifact@v4
+        with:
+          name: build-kit
+      - name: Load build-kit image
         run: |
-          docker pull --quiet ${{ env.BUILD_KIT_IMAGE }}
+          docker load -i build-kit.tar
           docker image tag ${{ env.BUILD_KIT_IMAGE }} build-kit
       - name: Create integration-image
         run: |
@@ -452,8 +493,9 @@ jobs:
       - name: Run integration tests
         id: run_integration_tests
         run: |
-          docker compose run \
+          docker compose \
           -f source/${{ inputs.docker_compose_file_path }} \
+          run \
           ${{ inputs.test_service_name }} \
           run-script run_integration_tests
       - name: Upload result and report as artifact
@@ -462,7 +504,7 @@ jobs:
         with:
           if-no-files-found: error
           name: integration-test-report
-          path:
+          path: |
             ${{ inputs.result_xml_path }}
             ${{ inputs.report_html_path }}
       - name: Render result
