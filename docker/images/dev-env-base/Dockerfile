@@ -50,7 +50,7 @@ RUN apt update \
     nmap=${NMAP_VERSION}
 
 # renovate: datasource=pypi depName=esbonio
-ENV ESBONIO_VERSION=0.16.4
+ENV ESBONIO_VERSION=0.16.5
 # renovate: datasource=pypi depName=doc8
 ENV DOC8_VERSION=1.1.2
 

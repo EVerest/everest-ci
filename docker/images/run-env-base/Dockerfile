@@ -2,7 +2,7 @@
 FROM debian:12-slim
 
 # renovate: datasource=repology depName=debian_12/openjdk-17 versioning=loose
-ENV OPENJDK_17_JRE_VERSION=17.0.12+7-2~deb12u1
+ENV OPENJDK_17_JRE_VERSION=17.0.13+11-2~deb12u1
 # renovate: datasource=repology depName=debian_12/nodejs versioning=loose
 ENV NODEJS_VERSION=18.19.0+dfsg-6~deb12u2
 # renovate: datasource=repology depName=debian_12/npm versioning=loose
@@ -20,7 +20,7 @@ ENV LIBBOOST_CHRONO1_74_0_VERSION=1.74.0+ds1-21
 # renovate: datasource=repology depName=debian_12/boost1.74 versioning=loose
 ENV LIBBOOST_SYSTEM1_74_0_VERSION=1.74.0+ds1-21
 # renovate: datasource=repology depName=debian_12/openssl versioning=loose
-ENV LIBSSL3_VERSION=3.0.14-1~deb12u1
+ENV LIBSSL3_VERSION=3.0.14-1~deb12u2
 # renovate: datasource=repology depName=debian_12/curl versioning=loose
 ENV LIBCURL4_VERSION=7.88.1-10+deb12u7
 # renovate: datasource=repology depName=debian_12/libcap2 versioning=loose
@@ -66,7 +66,7 @@ ENV ENVIRONS_VERSION=11.0.0
 # renovate: datasource=pypi depName=py4j
 ENV PY4J_VERSION=0.10.9.7
 # renovate: datasource=pypi depName=aiofile
-ENV AIOFILE_VERSION=3.8.8
+ENV AIOFILE_VERSION=3.9.0
 
 RUN python3 -m pip install --break-system-packages \
     environs==${ENVIRONS_VERSION} \
