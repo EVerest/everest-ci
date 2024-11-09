@@ -22,7 +22,7 @@ ENV LIBBOOST_SYSTEM1_74_0_VERSION=1.74.0+ds1-21
 # renovate: datasource=repology depName=debian_12/openssl versioning=loose
 ENV LIBSSL3_VERSION=3.0.14-1~deb12u2
 # renovate: datasource=repology depName=debian_12/curl versioning=loose
-ENV LIBCURL4_VERSION=7.88.1-10+deb12u7
+ENV LIBCURL4_VERSION=7.88.1-10+deb12u8
 # renovate: datasource=repology depName=debian_12/libcap2 versioning=loose
 ENV LIBCAP2_VERSION=1:2.66-4
 # renovate: datasource=repology depName=debian_12/less versioning=loose

@@ -64,7 +64,7 @@ RUN python3 -m pip install --break-system-packages \
 # renovate: datasource=repology depName=debian_12/ca-certificates versioning=loose
 ENV CA_CERTIFICATES_VERSION=20230311
 # renovate: datasource=repology depName=debian_12/curl versioning=loose
-ENV CURL_VERSION=7.88.1-10+deb12u7
+ENV CURL_VERSION=7.88.1-10+deb12u8
 
 # Not managed by renovate, because no available datasource
 ENV DOCKER_CE_VERSION=5:27.0.3-1~debian.12~bookworm
