@@ -10,7 +10,7 @@ ENV NPM_VERSION=9.2.0~ds1-1
 # renovate: datasource=repology depName=debian_12/python3-pip versioning=loose
 ENV PYTHON3_PIP_VERSION=23.0.1+dfsg-1
 # renovate: datasource=repology depName=debian_12/sqlite3 versioning=loose
-ENV SQLITE3_VERSION=3.40.1-2
+ENV SQLITE3_VERSION=3.40.1-2+deb12u1
 # renovate: datasource=repology depName=debian_12/boost1.74 versioning=loose
 ENV LIBBOOST_PROGRAM_OPTIONS1_74_0_VERSION=1.74.0+ds1-21
 # renovate: datasource=repology depName=debian_12/boost1.74 versioning=loose
