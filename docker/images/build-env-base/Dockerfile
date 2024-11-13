@@ -58,7 +58,7 @@ COPY run-clang-format.py /usr/bin/run-clang-format
 # renovate: datasource=repology depName=debian_12/boost-defaults versioning=loose
 ENV LIBBOOST_ALL_DEV_VERSION=1.74.0.3
 # renovate: datasource=repology depName=debian_12/libsqlite3-dev versioning=loose
-ENV LIBSQLITE3_DEV_VERSION=3.40.1-2
+ENV LIBSQLITE3_DEV_VERSION=3.40.1-2+deb12u1
 # renovate: datasource=repology depName=debian_12/openssl versioning=loose
 ENV LIBSSL_DEV_VERSION=3.0.14-1~deb12u2
 # renovate: datasource=repology depName=debian_12/nodejs versioning=loose
