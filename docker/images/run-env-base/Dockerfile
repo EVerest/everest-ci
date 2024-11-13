@@ -10,7 +10,7 @@ ENV NPM_VERSION=9.2.0~ds1-1
 # renovate: datasource=repology depName=debian_12/python3-pip versioning=loose
 ENV PYTHON3_PIP_VERSION=23.0.1+dfsg-1
 # renovate: datasource=repology depName=debian_12/sqlite3 versioning=loose
-ENV SQLITE3_VERSION=3.40.1-2
+ENV SQLITE3_VERSION=3.40.1-2+deb12u1
 # renovate: datasource=repology depName=debian_12/boost1.74 versioning=loose
 ENV LIBBOOST_PROGRAM_OPTIONS1_74_0_VERSION=1.74.0+ds1-21
 # renovate: datasource=repology depName=debian_12/boost1.74 versioning=loose
@@ -20,9 +20,9 @@ ENV LIBBOOST_CHRONO1_74_0_VERSION=1.74.0+ds1-21
 # renovate: datasource=repology depName=debian_12/boost1.74 versioning=loose
 ENV LIBBOOST_SYSTEM1_74_0_VERSION=1.74.0+ds1-21
 # renovate: datasource=repology depName=debian_12/openssl versioning=loose
-ENV LIBSSL3_VERSION=3.0.14-1~deb12u2
+ENV LIBSSL3_VERSION=3.0.15-1~deb12u1
 # renovate: datasource=repology depName=debian_12/curl versioning=loose
-ENV LIBCURL4_VERSION=7.88.1-10+deb12u7
+ENV LIBCURL4_VERSION=7.88.1-10+deb12u8
 # renovate: datasource=repology depName=debian_12/libcap2 versioning=loose
 ENV LIBCAP2_VERSION=1:2.66-4
 # renovate: datasource=repology depName=debian_12/less versioning=loose
@@ -62,7 +62,7 @@ RUN apt update \
     && rm -rf /var/lib/apt/lists/*
 
 # renovate: datasource=pypi depName=environs
-ENV ENVIRONS_VERSION=11.0.0
+ENV ENVIRONS_VERSION=11.1.0
 # renovate: datasource=pypi depName=py4j
 ENV PY4J_VERSION=0.10.9.7
 # renovate: datasource=pypi depName=aiofile
