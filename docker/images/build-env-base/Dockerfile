@@ -9,7 +9,7 @@ ENV CURL_VERSION=7.88.1-10+deb12u8
 # renovate: datasource=repology depName=debian_12/rsync versioning=loose
 ENV RSYNC_VERSION=3.2.7-1
 # renovate: datasource=repology depName=debian_12/ninja-build versioning=loose
-ENV NINJA_BUILD_VERSION=1.11.1-1
+ENV NINJA_BUILD_VERSION=1.11.1-2~deb12u1
 # renovate: datasource=repology depName=debian_12/make-dfsg versioning=loose
 ENV MAKE_VERSION=4.3-4.1
 # renovate: datasource=repology depName=debian_12/cmake versioning=loose
