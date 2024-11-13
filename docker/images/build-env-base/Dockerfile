@@ -102,7 +102,7 @@ RUN apt clean \
     && rm -rf /var/lib/apt/lists/*
 
 # renovate: datasource=pypi depName=gcovr
-ENV GCOVR_VERSION=7.2
+ENV GCOVR_VERSION=8.2
 # renovate: datasource=pypi depName=sphinxcontrib-contentui
 ENV SPHINXCONTRIB_CONTENTUI_VERSION=0.2.5
 # renovate: datasource=pypi depName=sphinxcontrib-svg2pdfconverter
