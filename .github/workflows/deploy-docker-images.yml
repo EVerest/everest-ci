@@ -11,6 +11,10 @@ on:
         description: 'Build deprecated images'
         default: false
         type: boolean
+
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - '**'
@@ -22,6 +26,7 @@ env:
   DOCKER_DIRECTORY: docker/images
   PLATFORMS: |
     linux/amd64
+    linux/arm64
   PATH_TO_DEPLOY_SINGLE_DOCKER_IMAGE_WORKFLOW: .github/workflows/deploy-single-docker-image.yml
   PATH_TO_DEPLOY_DOCKER_IMAGES_WORKFLOW: .github/workflows/deploy-docker-images.yml
 
