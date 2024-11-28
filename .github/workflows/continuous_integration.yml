@@ -80,6 +80,11 @@ on:
         required: false
         default: '.ci/build-kit/scripts'
         type: string
+      build_kit_base_image_tag:
+        description: 'The tag of the base image to use for the build kit'
+        required: false
+        default: ''
+        type: string
       # Build inputs
       ctest_report_path:
         description: 'The path to the ctest report, relative to the github workspace'
@@ -247,6 +252,12 @@ jobs:
           if [ -z "$TAG" ]; then
             echo "No tag found for commit $TARGET_SHA (only last 100 commits were checked)"
             exit 1
+          fi
+
+          # if inputs.build_kit_base_image_tag is != "", use it as the tag
+          if [ -n "${{ inputs.build_kit_base_image_tag }}" ]; then
+            echo "Using inputs.build_kit_base_image_tag as tag"
+            TAG="${{ inputs.build_kit_base_image_tag }}"
           fi
 
           echo "latest_tag=$TAG" >> $GITHUB_OUTPUT
