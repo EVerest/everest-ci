@@ -28,6 +28,8 @@ ENV LCOV_VERSION=1.16-1
 ENV CLANG_FORMAT_VERSION=1:15.0.6-4+b1
 # renovate: datasource=repology depName=debian_12/clang-tidy versioning=loose
 ENV CLANG_TIDY_VERSION=1:15.0.6-4+b1
+# renovate: datasource=repology depName=debian_12/doxygen versioning=loose
+ENV DOXYGEN_VERSION=1.9.4-4
 
 RUN apt update \
     && apt install --no-install-recommends -y \
@@ -47,7 +49,9 @@ RUN apt update \
     ccache=${CCACHE_VERSION} \
     lcov=${LCOV_VERSION} \
     clang-format-15=${CLANG_FORMAT_VERSION} \
-    clang-tidy-15=${CLANG_TIDY_VERSION}
+    clang-tidy-15=${CLANG_TIDY_VERSION} \
+    # documentation
+    doxygen=${DOXYGEN_VERSION}
 
 # Create symlinks for clang-format and clang-tidy
 RUN ln -s /usr/bin/clang-format-15 /usr/bin/clang-format \
