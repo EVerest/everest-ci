@@ -80,6 +80,11 @@ on:
         required: false
         default: '.ci/build-kit/scripts'
         type: string
+      build_kit_base_image_tag:
+        description: 'The tag of the base image to use for the build kit'
+        required: false
+        default: ''
+        type: string
       # Build inputs
       ctest_report_path:
         description: 'The path to the ctest report, relative to the github workspace'
@@ -177,6 +182,10 @@ on:
       coverage_deploy_token:
         description: 'The token to use to deploy the coverage report'
         required: true
+    outputs:
+      sha_everest_ci:
+        description: 'The sha of the everest-ci repository'
+        value: ${{ jobs.setup-env.outputs.sha_everest_ci }}
 
 jobs:
   lint:
@@ -247,6 +256,12 @@ jobs:
           if [ -z "$TAG" ]; then
             echo "No tag found for commit $TARGET_SHA (only last 100 commits were checked)"
             exit 1
+          fi
+
+          # if inputs.build_kit_base_image_tag is != "", use it as the tag
+          if [ -n "${{ inputs.build_kit_base_image_tag }}" ]; then
+            echo "Using inputs.build_kit_base_image_tag as tag"
+            TAG="${{ inputs.build_kit_base_image_tag }}"
           fi
 
           echo "latest_tag=$TAG" >> $GITHUB_OUTPUT

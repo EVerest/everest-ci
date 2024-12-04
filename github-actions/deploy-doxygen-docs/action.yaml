@@ -1,0 +1,59 @@
+name: 'Deploy Doxygen Docs'
+description: 'Deploy Doxygen Docs to a github pages repository'
+inputs:
+  target_repo:
+    description: 'Repository to deploy docs to'
+    required: true
+  github_token:
+    description: 'Github token, with write access to the target repository'
+    required: true
+  source_repo:
+    description: 'Repository to deploy docs from'
+    required: true
+    default: ${{ github.repository }}
+  workflow_run_id:
+    description: 'Workflow run id to deploy docs from'
+    required: true
+    default: ${{ github.run_id }}
+  docs_directory:
+    description: 'Directory or containing the docs to deploy'
+    required: true
+outputs:
+  deployed_path:
+    description: 'Path to the deployed docs'
+    value: ${{ steps.determine_target_path.outputs.target_path }}
+runs:
+  using: "composite"
+  steps:
+    - name: Configure git
+      shell: bash
+      run: |
+        git config --global user.email "compiler@pionix.de"
+        git config --global user.name "Github Service Account"
+    - name: Checkout target repository
+      uses: actions/checkout@v4.2.2
+      with:
+        repository: ${{ inputs.target_repo }}
+        path: gh-pages-repo
+        token: ${{ inputs.github_token }}
+        ref: main
+    - name: Determine target path
+      id: determine_target_path
+      shell: bash
+      run: |
+        target_path="doxygen-docs/${{ inputs.source_repo }}"
+        echo "target_path=$target_path" >> $GITHUB_OUTPUT
+    - name: Copy Docs
+      shell: bash
+      run: |
+        mkdir -p gh-pages-repo/docs/${{ steps.determine_target_path.outputs.target_path }}
+        rm -rf gh-pages-repo/docs/${{ steps.determine_target_path.outputs.target_path }}/*
+        cp -r ${{ inputs.docs_directory }}/* gh-pages-repo/docs/${{ steps.determine_target_path.outputs.target_path }}
+    - name: Commit and push logs
+      shell: bash
+      run: |
+        git add docs/${{ steps.determine_target_path.outputs.target_path }}
+        commit_message="Deploy doxygen docs and remove old docs: ${{ inputs.source_repo }}/${{ inputs.artifact_name }}"
+        git diff-index --quiet HEAD || git commit -m "$commit_message"
+        git push
+      working-directory: gh-pages-repo
