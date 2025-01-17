@@ -7,7 +7,7 @@ ENV GIT_VERSION=1:2.39.5-0+deb12u1
 # renovate: datasource=repology depName=debian_12/curl versioning=loose
 ENV CURL_VERSION=7.88.1-10+deb12u8
 # renovate: datasource=repology depName=debian_12/rsync versioning=loose
-ENV RSYNC_VERSION=3.2.7-1
+ENV RSYNC_VERSION=3.2.7-1+deb12u2
 # renovate: datasource=repology depName=debian_12/ninja-build versioning=loose
 ENV NINJA_BUILD_VERSION=1.11.1-2~deb12u1
 # renovate: datasource=repology depName=debian_12/make-dfsg versioning=loose
