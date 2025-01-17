@@ -62,11 +62,14 @@ on:
         description: 'One tag of the deployed image with image name'
         value: ${{ jobs.build-and-push.outputs.one_image_tag_long }}
     secrets:
-      SA_GITHUB_PAT:
-        description: 'Github PAT with access to the repository'
+      DOCKER_REGISTRY_USERNAME:
+        description: 'Docker registry username'
         required: true
-      SA_GITHUB_USERNAME:
-        description: 'Github username'
+      DOCKER_REGISTRY_PAT:
+        description: 'Docker registry PAT with access to the repository'
+        required: true
+      GITHUB_REPOSITORY_PAT:
+        description: 'Github repository PAT with access to the repository'
         required: true
 
 jobs:
@@ -83,7 +86,7 @@ jobs:
         repository: ${{ github.repository }} 
         path: source
         ref: ${{ inputs.github_ref_after }}
-        token: ${{secrets.SA_GITHUB_PAT}}
+        token: ${{secrets.GITHUB_REPOSITORY_PAT}}
         fetch-depth: 0
     - name: Validate github_ref_before and github_ref_after
       if: ${{ inputs.force_rebuild == false }}
@@ -173,7 +176,7 @@ jobs:
         repository: ${{ github.repository }} 
         path: source
         ref: ${{github.ref}}
-        token: ${{secrets.SA_GITHUB_PAT}}
+        token: ${{secrets.GITHUB_REPOSITORY_PAT}}
         fetch-depth: 0
     - name: Get context / Path of Dockerfile
       id: get-context
@@ -215,8 +218,8 @@ jobs:
       if: ${{ needs.check.outputs.rebuild == 'true' || inputs.force_rebuild }}
       with:
         registry: ${{ inputs.docker_registry }}
-        username: ${{ secrets.SA_GITHUB_USERNAME }}
-        password: ${{ secrets.SA_GITHUB_PAT }}
+        username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+        password: ${{ secrets.DOCKER_REGISTRY_PAT }}
     - name: Build and push
       uses: docker/build-push-action@v6
       if: ${{ needs.check.outputs.rebuild == 'true' || inputs.force_rebuild }}
