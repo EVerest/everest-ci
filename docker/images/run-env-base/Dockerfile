@@ -62,7 +62,7 @@ RUN apt update \
     && rm -rf /var/lib/apt/lists/*
 
 # renovate: datasource=pypi depName=environs
-ENV ENVIRONS_VERSION=11.2.1
+ENV ENVIRONS_VERSION=14.1.0
 # renovate: datasource=pypi depName=py4j
 ENV PY4J_VERSION=0.10.9.7
 # renovate: datasource=pypi depName=aiofile
