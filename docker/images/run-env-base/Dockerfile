@@ -2,7 +2,7 @@
 FROM debian:12-slim
 
 # renovate: datasource=repology depName=debian_12/openjdk-17 versioning=loose
-ENV OPENJDK_17_JRE_VERSION=17.0.13+11-2~deb12u1
+ENV OPENJDK_17_JRE_VERSION=17.0.14+7-1~deb12u1
 # renovate: datasource=repology depName=debian_12/nodejs versioning=loose
 ENV NODEJS_VERSION=18.19.0+dfsg-6~deb12u2
 # renovate: datasource=repology depName=debian_12/npm versioning=loose
