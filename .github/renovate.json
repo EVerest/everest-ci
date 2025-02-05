@@ -34,35 +34,39 @@
   "packageRules": [
     {
       "description": "Group all debian_12 dependencies in Dockerfiles",
-      "groupName": "docker_debian_12",
+      "groupName": "debian 12 packages in docker files",
+      "matchPackageNames": [
+        "/^debian_12/"
+      ],
       "matchFileNames": [
-        "(^|/|\\.)Dockerfile$",
-        "(^|/)Dockerfile\\.[^/]*$"
+        "/(^|\\/)[^/]*Dockerfile(\\.[^/]*)?$/"
       ],
-      "matchDatasources":[
-        "repology"
+      "matchDatasources": [
+        "/^repology$/"
       ],
-      "matchDepNames":[
-        "debian_12/.*"
-      ]
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
     },
     {
       "description": "Group all pypi dependencies in Dockerfiles",
-      "groupName": "docker_pypi",
+      "groupName": "python packages in docker files",
       "matchFileNames": [
-        "(^|/|\\.)Dockerfile$",
-        "(^|/)Dockerfile\\.[^/]*$"
+        "/(^|\\/)[^/]*Dockerfile(\\.[^/]*)?$/"
       ],
       "matchDatasources": [
-        "pypi"
-      ]
+        "/^pypi$/"
+      ],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
     },
     {
       "description": "Group all deps in workflow files",
-      "groupName": "workflow",
+      "groupName": "github actions",
       "matchManagers": [
         "github-actions"
-      ]
+      ],
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
     }
   ]
 }
