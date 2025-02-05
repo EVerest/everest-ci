@@ -79,7 +79,7 @@ jobs:
       DOCKER_REGISTRY_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
       DOCKER_REGISTRY_PAT: ${{ secrets.SA_GITHUB_PAT }}
     with:
-      force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' }}
+      force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' || needs.run-env-base.outputs.rebuild == 'true' }}
       image_name: ${{ needs.env-setup.outputs.repository_name }}/build-env-base
       directory: ${{ needs.env-setup.outputs.docker_directory }}/build-env-base
       docker_registry: ${{ needs.env-setup.outputs.docker_registry }}
@@ -103,7 +103,7 @@ jobs:
       DOCKER_REGISTRY_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
       DOCKER_REGISTRY_PAT: ${{ secrets.SA_GITHUB_PAT }}
     with:
-      force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' }}
+      force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' || needs.build-env-base.outputs.rebuild == 'true' }}
       image_name: ${{ needs.env-setup.outputs.repository_name }}/dev-env-base
       directory: ${{ needs.env-setup.outputs.docker_directory }}/dev-env-base
       docker_registry: ${{ needs.env-setup.outputs.docker_registry }}
@@ -126,7 +126,7 @@ jobs:
       DOCKER_REGISTRY_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
       DOCKER_REGISTRY_PAT: ${{ secrets.SA_GITHUB_PAT }}
     with:
-      force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' }}
+      force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' || needs.build-env-base.outputs.rebuild == 'true' }}
       image_name: ${{ needs.env-setup.outputs.repository_name }}/build-kit-base
       directory: ${{ needs.env-setup.outputs.docker_directory }}/build-kit-base
       docker_registry: ${{ needs.env-setup.outputs.docker_registry }}
