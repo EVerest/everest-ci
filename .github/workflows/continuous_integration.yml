@@ -439,7 +439,7 @@ jobs:
           tar -czf dist.tar.gz dist
       - name: Upload dist artifact
         if: ${{ steps.create_dist.outcome == 'success' || steps.create_dist.outcome == 'failure' }}
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v4.6.0
         with:
           if-no-files-found: error
           path: dist.tar.gz
@@ -454,7 +454,7 @@ jobs:
           build-kit run-script install_wheels
       - name: Upload wheels artifact
         if: ${{ steps.create_wheels.outcome == 'success' || steps.create_wheels.outcome == 'failure' }}
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v4.6.0
         with:
           if-no-files-found: error
           path: ${{ inputs.wheels_path }}
@@ -516,7 +516,7 @@ jobs:
           run-script run_integration_tests
       - name: Upload result and report as artifact
         if: ${{ steps.run_integration_tests.outcome == 'success' || steps.run_integration_tests.outcome == 'failure' }}
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v4.6.0
         with:
           if-no-files-found: error
           name: integration-test-report
