@@ -271,13 +271,14 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             if [ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]; then
-              echo "is_fork=true" >> $GITHUB_OUTPUT
+              is_fork=true
             else
-              echo "is_fork=false" >> $GITHUB_OUTPUT
+              is_fork=false
             fi
           else
-            echo "is_fork=false" >> $GITHUB_OUTPUT
+            is_fork=false
           fi
+          echo "is_fork=${is_fork}" >> $GITHUB_OUTPUT
           if [ "${is_fork}" == "true" ]; then
             echo "This is a forked PR"
           else
