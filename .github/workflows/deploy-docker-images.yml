@@ -43,9 +43,8 @@ jobs:
       - id: check
         run: |
           echo "force_rebuild=${{ inputs.force_rebuild || (github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/' )) || false }}" >> $GITHUB_OUTPUT
-          # Build deprecated images if not explicitly disabled
-          #TODO: set default to false, once backwards compatibility is no longer needed
-          echo "build_deprecated_images=${{ inputs.build_deprecated_images || true }}" >> $GITHUB_OUTPUT
+          # Build deprecated images if explicitly enabled only
+          echo "build_deprecated_images=${{ inputs.build_deprecated_images || false }}" >> $GITHUB_OUTPUT
 
   # One job for each image, since the images build on top of each other a matrix strategy is not possible
   run-env-base:
