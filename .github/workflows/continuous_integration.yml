@@ -403,7 +403,7 @@ jobs:
           --name unit-test-container \
           build-kit run-script run_unit_tests
       - name: Archive test results
-        if: ${{ steps.run_unit_tests.outcome == 'success' || steps.run_unit_tests.outcome == 'failure' }}
+        if: ${{ always() && (steps.run_unit_tests.outcome == 'success' || steps.run_unit_tests.outcome == 'failure') }}
         uses: actions/upload-artifact@v4
         with:
           if-no-files-found: error
@@ -418,14 +418,14 @@ jobs:
           --name coverage-container \
           build-kit run-script run_coverage
       - name: Archive coverage report
-        if: ${{ steps.run_coverage.outcome == 'success' || steps.run_coverage.outcome == 'failure' }}
+        if: ${{ always() && (steps.run_coverage.outcome == 'success' || steps.run_coverage.outcome == 'failure') }}
         uses: actions/upload-artifact@v4
         with:
           if-no-files-found: error
           name: coverage-report
           path: ${{ inputs.coverage_report_path }}
       - name: Archive coverage xml
-        if: ${{ steps.run_coverage.outcome == 'success' || steps.run_coverage.outcome == 'failure' }}
+        if: ${{ always() && (steps.run_coverage.outcome == 'success' || steps.run_coverage.outcome == 'failure') }}
         uses: actions/upload-artifact@v4
         with:
           if-no-files-found: error
@@ -433,7 +433,7 @@ jobs:
           path: ${{ inputs.coverage_xml_path}}
       - name: Deploy html coverage report
         id: deploy_coverage_report
-        if: ${{ ( steps.run_coverage.outcome == 'success' || steps.run_coverage.outcome == 'failure' ) && needs.setup-env.outputs.is_fork == 'false' }}
+        if: ${{ always() && ( steps.run_coverage.outcome == 'success' || steps.run_coverage.outcome == 'failure' ) && needs.setup-env.outputs.is_fork == 'false' }}
         uses: ./everest-ci/github-actions/deploy-ci-artifact
         with:
           target_repo: ${{ inputs.artifact_deploy_target_repo }}
@@ -441,7 +441,7 @@ jobs:
           artifact_name: coverage-report
           artifact_directory: ${{ inputs.coverage_report_path }}
       - name: Write summary coverage
-        if: ${{ steps.run_coverage.outcome == 'success' || steps.run_coverage.outcome == 'failure' }}
+        if: ${{ always() && (steps.run_coverage.outcome == 'success' || steps.run_coverage.outcome == 'failure') }}
         run: |
           echo "Coverage report deployed to: [everest.github.io](https://everest.github.io/${{ steps.deploy_coverage_report.outputs.deployed_path }})" >> $GITHUB_STEP_SUMMARY
       - name: Create dist
@@ -453,11 +453,11 @@ jobs:
           --name dist-container \
           build-kit run-script install
       - name: Tar dist dir and keep permissions
-        if: ${{ steps.create_dist.outcome == 'success' || steps.create_dist.outcome == 'failure' }}
+        if: ${{ always() && (steps.create_dist.outcome == 'success' || steps.create_dist.outcome == 'failure') }}
         run: |
           tar -czf dist.tar.gz dist
       - name: Upload dist artifact
-        if: ${{ steps.create_dist.outcome == 'success' || steps.create_dist.outcome == 'failure' }}
+        if: ${{ always() && (steps.create_dist.outcome == 'success' || steps.create_dist.outcome == 'failure') }}
         uses: actions/upload-artifact@v4.6.1
         with:
           if-no-files-found: error
@@ -472,7 +472,7 @@ jobs:
           --name wheels-container \
           build-kit run-script install_wheels
       - name: Upload wheels artifact
-        if: ${{ steps.create_wheels.outcome == 'success' || steps.create_wheels.outcome == 'failure' }}
+        if: ${{ always() && (steps.create_wheels.outcome == 'success' || steps.create_wheels.outcome == 'failure') }}
         uses: actions/upload-artifact@v4.6.1
         with:
           if-no-files-found: error
@@ -534,7 +534,7 @@ jobs:
           ${{ inputs.test_service_name }} \
           run-script run_integration_tests
       - name: Upload result and report as artifact
-        if: ${{ steps.run_integration_tests.outcome == 'success' || steps.run_integration_tests.outcome == 'failure' }}
+        if: ${{ always() && (steps.run_integration_tests.outcome == 'success' || steps.run_integration_tests.outcome == 'failure') }}
         uses: actions/upload-artifact@v4.6.1
         with:
           if-no-files-found: error
@@ -543,7 +543,7 @@ jobs:
             ${{ inputs.result_xml_path }}
             ${{ inputs.report_html_path }}
       - name: Render result
-        if: ${{ steps.run_integration_tests.outcome == 'success' || steps.run_integration_tests.outcome == 'failure' }}
+        if: ${{ always() && (steps.run_integration_tests.outcome == 'success' || steps.run_integration_tests.outcome == 'failure') }}
         uses: pmeier/pytest-results-action@v0.7.1
         with:
           path: ${{ inputs.result_xml_path }}
