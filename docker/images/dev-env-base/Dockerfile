@@ -16,7 +16,7 @@ RUN apt update \
     && chmod 0440 /etc/sudoers.d/${USERNAME}
 
 # renovate: datasource=repology depName=debian_12/wget versioning=loose
-ENV WGET_VERSION=1.21.3-1+b2
+ENV WGET_VERSION=1.21.3-1+deb12u1
 # renovate: datasource=repology depName=debian_12/doxygen versioning=loose
 ENV DOXYGEN_VERSION=1.9.4-4
 # renovate: datasource=repology depName=debian_12/graphviz versioning=loose
@@ -28,7 +28,7 @@ ENV CPPCHECK_VERSION=2.10-2
 # renovate: datasource=repology depName=debian_12/bash-completion versioning=loose
 ENV BASH_COMPLETION_VERSION=1:2.11-6
 # renovate: datasource=repology depName=debian_12/vim versioning=loose
-ENV VIM_VERSION=2:9.0.1378-2
+ENV VIM_VERSION=2:9.0.1378-2+deb12u2
 # renovate: datasource=repology depName=debian_12/gdb versioning=loose
 ENV GDB_VERSION=13.1-3
 # renovate: datasource=repology depName=debian_12/nmap versioning=loose
@@ -64,7 +64,7 @@ RUN python3 -m pip install --break-system-packages \
 # renovate: datasource=repology depName=debian_12/ca-certificates versioning=loose
 ENV CA_CERTIFICATES_VERSION=20230311
 # renovate: datasource=repology depName=debian_12/curl versioning=loose
-ENV CURL_VERSION=7.88.1-10+deb12u8
+ENV CURL_VERSION=7.88.1-10+deb12u12
 
 # Not managed by renovate, because no available datasource
 ENV DOCKER_CE_VERSION=5:27.0.3-1~debian.12~bookworm
