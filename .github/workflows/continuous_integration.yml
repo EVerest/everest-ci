@@ -182,6 +182,9 @@ on:
       coverage_deploy_token:
         description: 'The token to use to deploy the coverage report'
         required: true
+      SA_GITHUB_SSH_KEY:
+        description: 'The ssh key to use for git operations'
+        required: false
     outputs:
       sha_everest_ci:
         description: 'The sha of the everest-ci repository'
@@ -237,6 +240,7 @@ jobs:
         with:
           repository-name:  everest/everest-ci
           file-name: continuous_integration.yml
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Determine latest tag of everest-ci
         id: set_tag_everest_ci
         env:
@@ -351,7 +355,22 @@ jobs:
     runs-on: ${{ inputs.runner }}
     env:
       BUILD_KIT_IMAGE: ${{ needs.build-the-build-kit.outputs.build_kit_image_tag }}
+      SSH_AUTH_SOCK: /tmp/ssh_agent.sock
     steps:
+      - name: Add SSH KEY
+        env:
+          SSH_KEY: ${{ secrets.SA_GITHUB_SSH_KEY }}
+        if: ${{ env.SSH_KEY != ''}}
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ env.SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          # Check if github.com is already in known_hosts, if not, add it
+          if ! grep -q "^github.com " ~/.ssh/known_hosts; then
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+          fi
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          ssh-add ~/.ssh/id_ed25519
       - name: Checkout local github actions
         uses: actions/checkout@v4
         with:
@@ -391,6 +410,8 @@ jobs:
       - name: Compile
         run: |
           docker run \
+          --mount type=bind,source=$SSH_AUTH_SOCK,target=/ssh-agent \
+          --env SSH_AUTH_SOCK=/ssh-agent \
           --volume "${{ github.workspace }}:/ext" \
           --name compile-container \
           build-kit run-script compile
@@ -399,6 +420,8 @@ jobs:
         if: ${{ inputs.run_unit_tests == 'true' }}
         run: |
           docker run \
+          --mount type=bind,source=$SSH_AUTH_SOCK,target=/ssh-agent \
+          --env SSH_AUTH_SOCK=/ssh-agent \
           --volume "${{ github.workspace }}:/ext" \
           --name unit-test-container \
           build-kit run-script run_unit_tests
@@ -414,6 +437,8 @@ jobs:
         if: ${{ inputs.run_coverage == 'true' }}
         run: |
           docker run \
+          --mount type=bind,source=$SSH_AUTH_SOCK,target=/ssh-agent \
+          --env SSH_AUTH_SOCK=/ssh-agent \
           --volume "${{ github.workspace }}:/ext" \
           --name coverage-container \
           build-kit run-script run_coverage
@@ -449,6 +474,8 @@ jobs:
         if: ${{ inputs.run_install == 'true' }}
         run: |
           docker run \
+          --mount type=bind,source=$SSH_AUTH_SOCK,target=/ssh-agent \
+          --env SSH_AUTH_SOCK=/ssh-agent \
           --volume "${{ github.workspace }}:/ext" \
           --name dist-container \
           build-kit run-script install
@@ -468,6 +495,8 @@ jobs:
         if: ${{ inputs.run_install_wheels == 'true' }}
         run: |
           docker run \
+          --mount type=bind,source=$SSH_AUTH_SOCK,target=/ssh-agent \
+          --env SSH_AUTH_SOCK=/ssh-agent \
           --volume "${{ github.workspace }}:/ext" \
           --name wheels-container \
           build-kit run-script install_wheels
