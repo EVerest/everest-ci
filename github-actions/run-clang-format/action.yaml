@@ -19,7 +19,7 @@ inputs:
     default: 'always'
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/everest/everest-ci/build-env-base:v1.4.6'
+  image: 'docker://ghcr.io/everest/everest-ci/build-env-base:v1.5.1'
   args:
     - /usr/bin/run-clang-format
     - /github/workspace/${{ inputs.source-dir }}
