@@ -236,7 +236,7 @@ jobs:
           print(f"Set output workflow_path to {workflow_path}")
       - name: Determine SHA of the reusable workflow
         id: set_sha_everest_ci
-        uses: canonical/get-workflow-version-action@v1.0.0
+        uses: canonical/get-workflow-version-action@v1.0.1
         with:
           repository-name:  everest/everest-ci
           file-name: continuous_integration.yml
