@@ -360,7 +360,6 @@ jobs:
       - name: Setup SSH Agent, optional with SSH key
         env:
           SSH_KEY: ${{ secrets.SA_GITHUB_SSH_KEY }}
-        if: ${{ env.SSH_KEY != ''}}
         run: |
           ssh-agent -a $SSH_AUTH_SOCK > /dev/null
           if [ -z "${{ env.SSH_KEY }}" ]; then
