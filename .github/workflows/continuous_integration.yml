@@ -522,7 +522,7 @@ jobs:
     if: ${{ inputs.run_integration_tests == 'true' }}
     steps:
       - name: Download dist dir
-        uses: actions/download-artifact@v4.2.1
+        uses: actions/download-artifact@v4.3.0
         with:
           name: dist
       - name: Extract dist.tar.gz
@@ -530,7 +530,7 @@ jobs:
           tar -xzf ${{ github.workspace }}/dist.tar.gz -C ${{ github.workspace }}
       - name: Download wheels
         if: ${{ inputs.run_install_wheels == 'true' }}
-        uses: actions/download-artifact@v4.2.1
+        uses: actions/download-artifact@v4.3.0
         with:
           name: wheels
           path: wheels
@@ -598,7 +598,7 @@ jobs:
           ref: ${{ needs.setup-env.outputs.sha_everest_ci }}
           path: everest-ci
       - name: Download xml coverage report
-        uses: actions/download-artifact@v4.2.1
+        uses: actions/download-artifact@v4.3.0
         with:
           if-no-files-found: error
           name: coverage-xml
@@ -630,7 +630,7 @@ jobs:
           artifact_directory: ${{ github.workspace }}/coverage-badge/
           deploy_global_artifact: true
       - name: Download html coverage report
-        uses: actions/download-artifact@v4.2.1
+        uses: actions/download-artifact@v4.3.0
         with:
           if-no-files-found: error
           name: coverage-report
