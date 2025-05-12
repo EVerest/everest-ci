@@ -134,3 +134,22 @@ RUN git clone https://github.com/EVerest/everest-cmake.git ${EVEREST_CMAKE_PATH}
     && cd ${EVEREST_CMAKE_PATH} \
     && git checkout ${EVEREST_CMAKE_VERSION} \
     && rm -r .git
+
+# Install grpc and grpc-extended-cpp-plugin
+ENV GRPC_VERSION=v1.71.0
+ENV GRPC_EXTENDED_CPP_PLUGIN_VERSION=v0.1.0
+RUN tmpdir=$(mktemp -d) \
+    && cd $tmpdir \
+    && git clone --depth 1 --recurse-submodules --shallow-submodules --branch ${GRPC_VERSION} https://github.com/grpc/grpc.git \
+    && git clone --branch ${GRPC_EXTENDED_CPP_PLUGIN_VERSION} https://github.com/EVerest/grpc-extended-cpp-plugin.git \
+    && cmake -B build -S grpc-extended-cpp-plugin -G Ninja -D gRPC_INSTALL=ON \
+    && cmake --build build \
+    && cmake --install build \
+    && rm -rf $tmpdir
+# renovate: datasource=pypi depName=grpcio
+ENV GRPCIO_VERSION=1.71.0
+# renovate: datasource=pypi depName=grpcio-tools
+ENV GRPCIO_TOOLS_VERSION=1.71.0
+RUN python3 -m pip install --break-system-packages \
+    grpcio==${GRPCIO_VERSION} \
+    grpcio-tools==${GRPCIO_TOOLS_VERSION}
