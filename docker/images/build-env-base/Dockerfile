@@ -146,3 +146,10 @@ RUN tmpdir=$(mktemp -d) \
     && cmake --build build \
     && cmake --install build \
     && rm -rf $tmpdir
+# renovate: datasource=pypi depName=grpcio
+ENV GRPCIO_VERSION=1.71.0
+# renovate: datasource=pypi depName=grpcio-tools
+ENV GRPCIO_TOOLS_VERSION=1.71.0
+RUN python3 -m pip install --break-system-packages \
+    grpcio==${GRPCIO_VERSION} \
+    grpcio-tools==${GRPCIO_TOOLS_VERSION}
