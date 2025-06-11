@@ -576,7 +576,7 @@ jobs:
             ${{ inputs.report_html_path }}
       - name: Render result
         if: ${{ always() && (steps.run_integration_tests.outcome == 'success' || steps.run_integration_tests.outcome == 'failure') }}
-        uses: pmeier/pytest-results-action@v0.7.1
+        uses: pmeier/pytest-results-action@v0.7.2
         with:
           path: ${{ inputs.result_xml_path }}
           summary: True
