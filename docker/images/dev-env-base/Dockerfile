@@ -114,5 +114,5 @@ RUN if [ ${TARGETARCH} != "amd64" ]; then \
         mv /entrypoint.sh /wrapped_entrypoint.sh; \
         cp /entrypoint_wrapper.sh /entrypoint.sh; \
     fi; \
-    rm /entrypoint_wrapper.sh
+    sudo rm /entrypoint_wrapper.sh
 ENTRYPOINT [ "/entrypoint.sh" ]
