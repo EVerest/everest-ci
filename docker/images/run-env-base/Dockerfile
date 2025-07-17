@@ -49,9 +49,9 @@ RUN apt update \
     libboost-log1.74.0=${LIBBOOST_LOG1_74_0_VERSION} \
     libboost-chrono1.74.0=${LIBBOOST_CHRONO1_74_0_VERSION} \
     libboost-system1.74.0=${LIBBOOST_SYSTEM1_74_0_VERSION} \
-    libssl3 \
+    libssl3=${LIBSSL3_VERSION} \
     libcurl4=${LIBCURL4_VERSION} \
-    libcap2 \
+    libcap2=${LIBCAP2_VERSION} \
     less=${LESS_VERSION} \
     python3-pydantic=${PYTHON3_PYDANTIC_VERSION} \
     python3-cryptography=${PYTHON3_CRYPTOGRAPHY_VERSION} \
