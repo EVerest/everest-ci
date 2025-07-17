@@ -49,9 +49,9 @@ RUN apt update \
     libboost-log1.74.0=${LIBBOOST_LOG1_74_0_VERSION} \
     libboost-chrono1.74.0=${LIBBOOST_CHRONO1_74_0_VERSION} \
     libboost-system1.74.0=${LIBBOOST_SYSTEM1_74_0_VERSION} \
-    libssl3=${LIBSSL3_VERSION} \
+    libssl3 \
     libcurl4=${LIBCURL4_VERSION} \
-    libcap2=${LIBCAP2_VERSION} \
+    libcap2 \
     less=${LESS_VERSION} \
     python3-pydantic=${PYTHON3_PYDANTIC_VERSION} \
     python3-cryptography=${PYTHON3_CRYPTOGRAPHY_VERSION} \
@@ -72,3 +72,13 @@ RUN python3 -m pip install --break-system-packages \
     environs==${ENVIRONS_VERSION} \
     py4j==${PY4J_VERSION} \
     aiofile==${AIOFILE_VERSION}
+
+COPY entrypoint.sh /entrypoint.sh
+ARG TARGETARCH
+COPY entrypoint_wrapper.sh /entrypoint_wrapper.sh
+RUN if [ ${TARGETARCH} != "amd64" ]; then \
+        mv /entrypoint.sh /wrapped_entrypoint.sh; \
+        cp /entrypoint_wrapper.sh /entrypoint.sh; \
+    fi; \
+    rm /entrypoint_wrapper.sh
+ENTRYPOINT [ "/entrypoint.sh" ]

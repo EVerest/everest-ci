@@ -6,12 +6,18 @@ ENV WORKSPACE_PATH=/workspace
 ARG EXT_MOUNT=/ext
 ENV EXT_MOUNT=$EXT_MOUNT
 
-COPY ./entrypoint.sh /
-
 # Disable ownership checks
 RUN git config --global --add safe.directory '*'
 
 WORKDIR $WORKSPACE_PATH
 
-ENTRYPOINT ["/entrypoint.sh"]
+COPY entrypoint.sh /entrypoint.sh
+ARG TARGETARCH
+COPY entrypoint_wrapper.sh /entrypoint_wrapper.sh
+RUN if [ ${TARGETARCH} != "amd64" ]; then \
+        mv /entrypoint.sh /wrapped_entrypoint.sh; \
+        cp /entrypoint_wrapper.sh /entrypoint.sh; \
+    fi; \
+    rm /entrypoint_wrapper.sh
+ENTRYPOINT [ "/entrypoint.sh" ]
 CMD ["run-script", "init"]
