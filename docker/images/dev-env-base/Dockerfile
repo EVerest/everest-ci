@@ -62,7 +62,7 @@ RUN python3 -m pip install --break-system-packages \
     doc8==${DOC8_VERSION}
 
 # renovate: datasource=repology depName=debian_12/ca-certificates versioning=loose
-ENV CA_CERTIFICATES_VERSION=20230311
+ENV CA_CERTIFICATES_VERSION=20230311+deb12u1
 # renovate: datasource=repology depName=debian_12/curl versioning=loose
 ENV CURL_VERSION=7.88.1-10+deb12u12
 
