@@ -20,11 +20,11 @@ ENV LIBBOOST_CHRONO1_74_0_VERSION=1.74.0+ds1-21
 # renovate: datasource=repology depName=debian_12/boost1.74 versioning=loose
 ENV LIBBOOST_SYSTEM1_74_0_VERSION=1.74.0+ds1-21
 # renovate: datasource=repology depName=debian_12/openssl versioning=loose
-ENV LIBSSL3_VERSION=3.0.15-1~deb12u1
+ENV LIBSSL3_VERSION=3.0.16-1~deb12u1
 # renovate: datasource=repology depName=debian_12/curl versioning=loose
 ENV LIBCURL4_VERSION=7.88.1-10+deb12u12
 # renovate: datasource=repology depName=debian_12/libcap2 versioning=loose
-ENV LIBCAP2_VERSION=1:2.66-4
+ENV LIBCAP2_VERSION=1:2.66-4+deb12u1
 # renovate: datasource=repology depName=debian_12/less versioning=loose
 ENV LESS_VERSION=590-2.1~deb12u2
 # renovate: datasource=repology depName=debian_12/python3-pydantic versioning=loose
@@ -62,7 +62,7 @@ RUN apt update \
     && rm -rf /var/lib/apt/lists/*
 
 # renovate: datasource=pypi depName=environs
-ENV ENVIRONS_VERSION=14.1.1
+ENV ENVIRONS_VERSION=14.2.0
 # renovate: datasource=pypi depName=py4j
 ENV PY4J_VERSION=0.10.9.7
 # renovate: datasource=pypi depName=aiofile
