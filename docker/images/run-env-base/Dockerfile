@@ -72,3 +72,13 @@ RUN python3 -m pip install --break-system-packages \
     environs==${ENVIRONS_VERSION} \
     py4j==${PY4J_VERSION} \
     aiofile==${AIOFILE_VERSION}
+
+COPY entrypoint.sh /entrypoint.sh
+ARG TARGETARCH
+COPY entrypoint_wrapper.sh /entrypoint_wrapper.sh
+RUN if [ ${TARGETARCH} != "amd64" ]; then \
+        mv /entrypoint.sh /wrapped_entrypoint.sh; \
+        cp /entrypoint_wrapper.sh /entrypoint.sh; \
+    fi; \
+    rm /entrypoint_wrapper.sh
+ENTRYPOINT [ "/entrypoint.sh" ]

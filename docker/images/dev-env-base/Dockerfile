@@ -106,3 +106,13 @@ ENV PATH="/home/$USERNAME/.local/bin:$PATH"
 
 # Create cache directory for cpm to avoid permission issues
 RUN mkdir -p ${HOME}/.cache/cpm
+
+COPY entrypoint.sh /entrypoint.sh
+ARG TARGETARCH
+COPY entrypoint_wrapper.sh /entrypoint_wrapper.sh
+RUN if [ ${TARGETARCH} != "amd64" ]; then \
+        mv /entrypoint.sh /wrapped_entrypoint.sh; \
+        cp /entrypoint_wrapper.sh /entrypoint.sh; \
+    fi; \
+    sudo rm /entrypoint_wrapper.sh
+ENTRYPOINT [ "/entrypoint.sh" ]

@@ -134,3 +134,13 @@ RUN git clone https://github.com/EVerest/everest-cmake.git ${EVEREST_CMAKE_PATH}
     && cd ${EVEREST_CMAKE_PATH} \
     && git checkout ${EVEREST_CMAKE_VERSION} \
     && rm -r .git
+
+COPY entrypoint.sh /entrypoint.sh
+ARG TARGETARCH
+COPY entrypoint_wrapper.sh /entrypoint_wrapper.sh
+RUN if [ ${TARGETARCH} != "amd64" ]; then \
+        mv /entrypoint.sh /wrapped_entrypoint.sh; \
+        cp /entrypoint_wrapper.sh /entrypoint.sh; \
+    fi; \
+    rm /entrypoint_wrapper.sh
+ENTRYPOINT [ "/entrypoint.sh" ]
