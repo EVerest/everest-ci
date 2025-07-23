@@ -71,7 +71,7 @@ ENV LIBNODE_DEV_VERSION=18.19.0+dfsg-6~deb12u2
 ENV PKG_CONFIG_VERSION=1.8.1-1
 # renovate: datasource=repology depName=debian_12/libpcap-dev versioning=loose
 ENV LIBPCAP_DEV_VERSION=1.10.3-1
-# renovate: datasource=repology depName=debian_12/libcap-dev versioning=loose
+# renovate: datasource=repology depName=debian_12/libcap versioning=loose
 ENV LIBCAP_DEV_VERSION=1:2.66-4+deb12u1
 # renovate: datasource=repology depName=debian_12/python3-venv versioning=loose
 ENV PYTHON3_VENV_VERSION=3.11.2-1+b1
