@@ -64,7 +64,7 @@ ENV LIBBOOST_ALL_DEV_VERSION=1.74.0.3
 # renovate: datasource=repology depName=debian_12/libsqlite3-dev versioning=loose
 ENV LIBSQLITE3_DEV_VERSION=3.40.1-2+deb12u1
 # renovate: datasource=repology depName=debian_12/openssl versioning=loose
-ENV LIBSSL_DEV_VERSION=3.0.16-1~deb12u1
+ENV LIBSSL_DEV_VERSION=3.0.17-1~deb12u1
 # renovate: datasource=repology depName=debian_12/nodejs versioning=loose
 ENV LIBNODE_DEV_VERSION=18.19.0+dfsg-6~deb12u2
 # renovate: datasource=repology depName=debian_12/pkg-config versioning=loose
@@ -120,7 +120,7 @@ RUN python3 -m pip install --break-system-packages \
     sphinxcontrib-svg2pdfconverter==${SPHINXCONTRIB_SVG2PDFCONVERTER_VERSION}
 
 # renovate: datasource=github-releases depName=EVerest/everest-dev-environment versioning=loose
-ENV EDM_VERSION=v0.7.1
+ENV EDM_VERSION=v0.8.0
 
 # Install EVerest dependency manager
 RUN python3 -m pip install --break-system-packages \
