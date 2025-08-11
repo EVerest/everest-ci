@@ -31,7 +31,7 @@ runs:
         git config --global user.email "compiler@pionix.de"
         git config --global user.name "Github Service Account"
     - name: Checkout target repository
-      uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v4.3.0
       with:
         repository: ${{ inputs.target_repo }}
         path: gh-pages-repo

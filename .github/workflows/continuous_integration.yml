@@ -535,7 +535,7 @@ jobs:
           name: wheels
           path: wheels
       - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v4.3.0
         with:
           path: source
       - name: Setup run scripts
