@@ -199,13 +199,13 @@ jobs:
     if: ${{ inputs.run_lint == 'true' }}
     steps:
       - name: Checkout local github actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: everest/everest-ci
           ref: ${{ needs.setup-env.outputs.sha_everest_ci }}
           path: everest-ci
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: source
       - name: Run clang-format
@@ -302,7 +302,7 @@ jobs:
       build_kit_image_tag: ${{ steps.set-outputs.outputs.tag }}
     steps:
       - name: Checkout Dockerfile
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ github.repository }}
           path: source
@@ -375,7 +375,7 @@ jobs:
           fi
           ssh-add ~/.ssh/id_ed25519
       - name: Checkout local github actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: everest/everest-ci
           ref: ${{ needs.setup-env.outputs.sha_everest_ci }}
@@ -395,7 +395,7 @@ jobs:
             compile-${{ env.branch_name_for_cache }}-
             compile-
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           path: source
       - name: Setup run scripts
@@ -535,7 +535,7 @@ jobs:
           name: wheels
           path: wheels
       - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
         with:
           path: source
       - name: Setup run scripts
@@ -592,7 +592,7 @@ jobs:
     if: ${{ inputs.run_coverage && inputs.do_not_run_coverage_badge_creation == 'false' && inputs.run_coverage == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout local github actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: everest/everest-ci
           ref: ${{ needs.setup-env.outputs.sha_everest_ci }}
