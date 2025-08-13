@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM debian:12-slim
+FROM debian:13-slim
 
 # renovate: datasource=repology depName=debian_12/openjdk-17 versioning=loose
 ENV OPENJDK_17_JRE_VERSION=17.0.15+6-1~deb12u1
