@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=debian:12
+ARG BASE_IMAGE=debian:13
 FROM ${BASE_IMAGE}
 
 RUN apt update && apt upgrade -y

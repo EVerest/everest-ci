@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM debian:11.7-slim
+FROM debian:13.0-slim
 
 ARG EXT_MOUNT=/ext
 ARG EVEREST_CMAKE_PATH=/usr/lib/cmake/everest-cmake
