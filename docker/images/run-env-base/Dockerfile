@@ -2,9 +2,9 @@
 FROM debian:12-slim
 
 # renovate: datasource=repology depName=debian_12/openjdk-17 versioning=loose
-ENV OPENJDK_17_JRE_VERSION=17.0.15+6-1~deb12u1
+ENV OPENJDK_17_JRE_VERSION=17.0.16+8-1~deb12u1
 # renovate: datasource=repology depName=debian_12/nodejs versioning=loose
-ENV NODEJS_VERSION=18.19.0+dfsg-6~deb12u2
+ENV NODEJS_VERSION=18.20.4+dfsg-1~deb12u1
 # renovate: datasource=repology depName=debian_12/npm versioning=loose
 ENV NPM_VERSION=9.2.0~ds1-1
 # renovate: datasource=repology depName=debian_12/python3-pip versioning=loose
@@ -20,7 +20,7 @@ ENV LIBBOOST_CHRONO1_74_0_VERSION=1.74.0+ds1-21
 # renovate: datasource=repology depName=debian_12/boost1.74 versioning=loose
 ENV LIBBOOST_SYSTEM1_74_0_VERSION=1.74.0+ds1-21
 # renovate: datasource=repology depName=debian_12/openssl versioning=loose
-ENV LIBSSL3_VERSION=3.0.17-1~deb12u1
+ENV LIBSSL3_VERSION=3.0.17-1~deb12u2
 # renovate: datasource=repology depName=debian_12/curl versioning=loose
 ENV LIBCURL4_VERSION=7.88.1-10+deb12u12
 # renovate: datasource=repology depName=debian_12/libcap2 versioning=loose
