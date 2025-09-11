@@ -15,24 +15,24 @@ RUN apt update \
     && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
     && chmod 0440 /etc/sudoers.d/${USERNAME}
 
-# renovate: datasource=repology depName=debian_12/wget versioning=loose
-ENV WGET_VERSION=1.21.3-1+deb12u1
-# renovate: datasource=repology depName=debian_12/doxygen versioning=loose
-ENV DOXYGEN_VERSION=1.9.4-4
-# renovate: datasource=repology depName=debian_12/graphviz versioning=loose
-ENV GRAPHVIZ_VERSION=2.42.2-7+deb12u1
-# renovate: datasource=repology depName=debian_12/build-essential-mipsen versioning=loose
-ENV BUILD_ESSENTIAL_VERSION=12.9
-# renovate: datasource=repology depName=debian_12/cppcheck versioning=loose
-ENV CPPCHECK_VERSION=2.10-2
-# renovate: datasource=repology depName=debian_12/bash-completion versioning=loose
-ENV BASH_COMPLETION_VERSION=1:2.11-6
-# renovate: datasource=repology depName=debian_12/vim versioning=loose
-ENV VIM_VERSION=2:9.0.1378-2+deb12u2
-# renovate: datasource=repology depName=debian_12/gdb versioning=loose
-ENV GDB_VERSION=13.1-3
-# renovate: datasource=repology depName=debian_12/nmap versioning=loose
-ENV NMAP_VERSION=7.93+dfsg1-1
+# renovate: datasource=repology depName=debian_13/wget versioning=loose
+ENV WGET_VERSION=1.25.0-2
+# renovate: datasource=repology depName=debian_13/doxygen versioning=loose
+ENV DOXYGEN_VERSION=1.9.8+ds-2.1
+# renovate: datasource=repology depName=debian_13/graphviz versioning=loose
+ENV GRAPHVIZ_VERSION=2.42.4-3
+# renovate: datasource=repology depName=debian_13/build-essential-mipsen versioning=loose
+ENV BUILD_ESSENTIAL_VERSION=12.12
+# renovate: datasource=repology depName=debian_13/cppcheck versioning=loose
+ENV CPPCHECK_VERSION=2.17.1-2
+# renovate: datasource=repology depName=debian_13/bash-completion versioning=loose
+ENV BASH_COMPLETION_VERSION=1:2.16.0-7
+# renovate: datasource=repology depName=debian_13/vim versioning=loose
+ENV VIM_VERSION=2:9.1.1230-2
+# renovate: datasource=repology depName=debian_13/gdb versioning=loose
+ENV GDB_VERSION=16.3-1
+# renovate: datasource=repology depName=debian_13/nmap versioning=loose
+ENV NMAP_VERSION=7.95+dfsg-3
 
 # Development Tools
 # Development Tools - General
@@ -61,17 +61,17 @@ RUN python3 -m pip install --break-system-packages \
     # Style checker for RST/Sphinx
     doc8==${DOC8_VERSION}
 
-# renovate: datasource=repology depName=debian_12/ca-certificates versioning=loose
-ENV CA_CERTIFICATES_VERSION=20230311+deb12u1
-# renovate: datasource=repology depName=debian_12/curl versioning=loose
-ENV CURL_VERSION=7.88.1-10+deb12u12
+# renovate: datasource=repology depName=debian_13/ca-certificates versioning=loose
+ENV CA_CERTIFICATES_VERSION=20250419
+# renovate: datasource=repology depName=debian_13/curl versioning=loose
+ENV CURL_VERSION=8.14.1-2
 
 # Not managed by renovate, because no available datasource
-ENV DOCKER_CE_VERSION=5:27.0.3-1~debian.12~bookworm
-ENV DOCKER_CE_CLI_VERSION=5:27.1.1-1~debian.12~bookworm
-ENV CONTAINERD_IO_VERSION=1.7.19-1
-ENV DOCKER_BUILDX_PLUGIN_VERSION=0.16.1-1~debian.12~bookworm
-ENV DOCKER_COMPOSE_PLUGIN_VERSION=2.29.1-1~debian.12~bookworm
+ENV DOCKER_CE_VERSION=5:28.1.0-1~debian.13~trixie
+ENV DOCKER_CE_CLI_VERSION=5:28.1.0-1~debian.13~trixie
+ENV CONTAINERD_IO_VERSION=1.7.27-1
+ENV DOCKER_BUILDX_PLUGIN_VERSION=0.22.0-1~debian.13~trixie
+ENV DOCKER_COMPOSE_PLUGIN_VERSION=2.35.0-1~debian.13~trixie
 
 # Development Tools - Docker
 RUN apt update \
