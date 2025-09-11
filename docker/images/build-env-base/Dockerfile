@@ -2,34 +2,34 @@
 ARG BASE_IMAGE_TAG=latest
 FROM ghcr.io/everest/everest-ci/run-env-base:${BASE_IMAGE_TAG}
 
-# renovate: datasource=repology depName=debian_12/git versioning=loose
-ENV GIT_VERSION=1:2.39.5-0+deb12u2
-# renovate: datasource=repology depName=debian_12/curl versioning=loose
-ENV CURL_VERSION=7.88.1-10+deb12u12
-# renovate: datasource=repology depName=debian_12/rsync versioning=loose
-ENV RSYNC_VERSION=3.2.7-1+deb12u2
-# renovate: datasource=repology depName=debian_12/ninja-build versioning=loose
-ENV NINJA_BUILD_VERSION=1.11.1-2~deb12u1
-# renovate: datasource=repology depName=debian_12/make-dfsg versioning=loose
-ENV MAKE_VERSION=4.3-4.1
-# renovate: datasource=repology depName=debian_12/cmake versioning=loose
-ENV CMAKE_VERSION=3.25.1-1
-# renovate: datasource=repology depName=debian_12/binutils versioning=loose
-ENV BINUTILS_VERSION=2.40-2
-# renovate: datasource=repology depName=debian_12/gcc versioning=loose
-ENV GCC_VERSION=4:12.2.0-3
-# renovate: datasource=repology depName=debian_12/g++ versioning=loose
-ENV GPP_VERSION=4:12.2.0-3
-# renovate: datasource=repology depName=debian_12/ccache versioning=loose
-ENV CCACHE_VERSION=4.8+really4.7.5-1
-# renovate: datasource=repology depName=debian_12/lcov versioning=loose
-ENV LCOV_VERSION=1.16-1
-# renovate: datasource=repology depName=debian_12/clang-format versioning=loose
-ENV CLANG_FORMAT_VERSION=1:15.0.6-4+b1
-# renovate: datasource=repology depName=debian_12/clang-tidy versioning=loose
-ENV CLANG_TIDY_VERSION=1:15.0.6-4+b1
-# renovate: datasource=repology depName=debian_12/doxygen versioning=loose
-ENV DOXYGEN_VERSION=1.9.4-4
+# renovate: datasource=repology depName=debian_13/git versioning=loose
+ENV GIT_VERSION=1:2.47.3-0+deb13u1
+# renovate: datasource=repology depName=debian_13/curl versioning=loose
+ENV CURL_VERSION=8.14.1-2
+# renovate: datasource=repology depName=debian_13/rsync versioning=loose
+ENV RSYNC_VERSION=3.4.1+ds1-5
+# renovate: datasource=repology depName=debian_13/ninja-build versioning=loose
+ENV NINJA_BUILD_VERSION=1.12.1-1
+# renovate: datasource=repology depName=debian_13/make-dfsg versioning=loose
+ENV MAKE_VERSION=4.4.1-2
+# renovate: datasource=repology depName=debian_13/cmake versioning=loose
+ENV CMAKE_VERSION=3.31.6-2
+# renovate: datasource=repology depName=debian_13/binutils versioning=loose
+ENV BINUTILS_VERSION=2.44-3
+# renovate: datasource=repology depName=debian_13/gcc versioning=loose
+ENV GCC_VERSION=4:14.2.0-1
+# renovate: datasource=repology depName=debian_13/g++ versioning=loose
+ENV GPP_VERSION=4:14.2.0-1
+# renovate: datasource=repology depName=debian_13/ccache versioning=loose
+ENV CCACHE_VERSION=4.11.2-2
+# renovate: datasource=repology depName=debian_13/lcov versioning=loose
+ENV LCOV_VERSION=2.3.1-1
+# renovate: datasource=repology depName=debian_13/clang-format versioning=loose
+ENV CLANG_FORMAT_VERSION=1:19.0-63
+# renovate: datasource=repology depName=debian_13/clang-tidy versioning=loose
+ENV CLANG_TIDY_VERSION=1:19.0-63
+# renovate: datasource=repology depName=debian_13/doxygen versioning=loose
+ENV DOXYGEN_VERSION=1.9.8+ds-2.1
 
 RUN apt update \
     && apt install --no-install-recommends -y \
@@ -48,37 +48,33 @@ RUN apt update \
     # compiler tools
     ccache=${CCACHE_VERSION} \
     lcov=${LCOV_VERSION} \
-    clang-format-15=${CLANG_FORMAT_VERSION} \
-    clang-tidy-15=${CLANG_TIDY_VERSION} \
+    clang-format=${CLANG_FORMAT_VERSION} \
+    clang-tidy=${CLANG_TIDY_VERSION} \
     # documentation
     doxygen=${DOXYGEN_VERSION}
 
-# Create symlinks for clang-format and clang-tidy
-RUN ln -s /usr/bin/clang-format-15 /usr/bin/clang-format \
-    && ln -s /usr/bin/clang-tidy-15 /usr/bin/clang-tidy
-
 COPY run-clang-format.py /usr/bin/run-clang-format
 
-# renovate: datasource=repology depName=debian_12/boost-defaults versioning=loose
-ENV LIBBOOST_ALL_DEV_VERSION=1.74.0.3
-# renovate: datasource=repology depName=debian_12/libsqlite3-dev versioning=loose
-ENV LIBSQLITE3_DEV_VERSION=3.40.1-2+deb12u1
-# renovate: datasource=repology depName=debian_12/openssl versioning=loose
-ENV LIBSSL_DEV_VERSION=3.0.17-1~deb12u1
-# renovate: datasource=repology depName=debian_12/nodejs versioning=loose
-ENV LIBNODE_DEV_VERSION=18.19.0+dfsg-6~deb12u2
-# renovate: datasource=repology depName=debian_12/pkg-config versioning=loose
-ENV PKG_CONFIG_VERSION=1.8.1-1
-# renovate: datasource=repology depName=debian_12/libpcap-dev versioning=loose
-ENV LIBPCAP_DEV_VERSION=1.10.3-1
-# renovate: datasource=repology depName=debian_12/libcap versioning=loose
-ENV LIBCAP_DEV_VERSION=1:2.66-4+deb12u1
-# renovate: datasource=repology depName=debian_12/python3-venv versioning=loose
-ENV PYTHON3_VENV_VERSION=3.11.2-1+b1
-# renovate: datasource=repology depName=debian_12/python3-build versioning=loose
-ENV PYTHON3_BUILD_VERSION=0.9.0-1
-# renovate: datasource=repology depName=debian_12/sphinx versioning=loose
-ENV PYTHON3_SPHINX_VERSION=5.3.0-4
+# renovate: datasource=repology depName=debian_13/boost-defaults versioning=loose
+ENV LIBBOOST_ALL_DEV_VERSION=1.83.0.2+b2
+# renovate: datasource=repology depName=debian_13/libsqlite3-dev versioning=loose
+ENV LIBSQLITE3_DEV_VERSION=3.46.1-7
+# renovate: datasource=repology depName=debian_13/openssl versioning=loose
+ENV LIBSSL_DEV_VERSION=3.5.1-1
+# renovate: datasource=repology depName=debian_13/nodejs versioning=loose
+ENV LIBNODE_DEV_VERSION=20.19.2+dfsg-1
+# renovate: datasource=repology depName=debian_13/pkg-config versioning=loose
+ENV PKG_CONFIG_VERSION=1.8.1-4
+# renovate: datasource=repology depName=debian_13/libpcap-dev versioning=loose
+ENV LIBPCAP_DEV_VERSION=1.10.5-2
+# renovate: datasource=repology depName=debian_13/libcap versioning=loose
+ENV LIBCAP_DEV_VERSION=1:2.75-10+b1
+# renovate: datasource=repology depName=debian_13/python3-venv versioning=loose
+ENV PYTHON3_VENV_VERSION=3.13.5-1
+# renovate: datasource=repology depName=debian_13/python3-build versioning=loose
+ENV PYTHON3_BUILD_VERSION=1.2.2-2
+# renovate: datasource=repology depName=debian_13/sphinx versioning=loose
+ENV PYTHON3_SPHINX_VERSION=8.1.3-5
 
 # additional packages
 RUN apt update \
@@ -106,7 +102,7 @@ RUN apt clean \
     && rm -rf /var/lib/apt/lists/*
 
 # renovate: datasource=pypi depName=gcovr
-ENV GCOVR_VERSION=8.2
+ENV GCOVR_VERSION=8.3
 # renovate: datasource=pypi depName=sphinxcontrib-contentui
 ENV SPHINXCONTRIB_CONTENTUI_VERSION=0.2.5
 # renovate: datasource=pypi depName=sphinxcontrib-svg2pdfconverter
