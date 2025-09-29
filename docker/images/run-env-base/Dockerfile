@@ -27,8 +27,6 @@ ENV LIBCURL4_VERSION=8.14.1-2
 ENV LIBCAP2_VERSION=1:2.75-10+b1
 # renovate: datasource=repology depName=debian_13/less versioning=loose
 ENV LESS_VERSION=668-1
-# renovate: datasource=repology depName=debian_13/python3-pydantic versioning=loose
-ENV PYTHON3_PYDANTIC_VERSION=1.10.4-1
 # renovate: datasource=repology depName=debian_13/python-cryptography versioning=loose
 ENV PYTHON3_CRYPTOGRAPHY_VERSION=43.0.0-3
 # renovate: datasource=repology depName=debian_13/python3-netifaces versioning=loose
@@ -53,7 +51,6 @@ RUN apt update \
     libcurl4t64=${LIBCURL4_VERSION} \
     libcap2=${LIBCAP2_VERSION} \
     less=${LESS_VERSION} \
-    python3-pydantic=${PYTHON3_PYDANTIC_VERSION} \
     python3-cryptography=${PYTHON3_CRYPTOGRAPHY_VERSION} \
     python3-netifaces=${PYTHON3_NETIFACES_VERSION} \
     python3-psutil=${PYTHON3_PSUTIL_VERSION} \
@@ -67,11 +64,14 @@ ENV ENVIRONS_VERSION=14.3.0
 ENV PY4J_VERSION=0.10.9.7
 # renovate: datasource=pypi depName=aiofile
 ENV AIOFILE_VERSION=3.9.0
+# renovate: datasource=pypi depName=pydantic
+ENV PYDANTIC_VERSION=1.10.4
 
 RUN python3 -m pip install --break-system-packages \
     environs==${ENVIRONS_VERSION} \
     py4j==${PY4J_VERSION} \
-    aiofile==${AIOFILE_VERSION}
+    aiofile==${AIOFILE_VERSION} \
+    pydantic==${PYDANTIC_VERSION}
 
 COPY entrypoint.sh /entrypoint.sh
 ARG TARGETARCH
