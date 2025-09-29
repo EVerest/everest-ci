@@ -28,7 +28,7 @@ ENV LIBCAP2_VERSION=1:2.75-10+b1
 # renovate: datasource=repology depName=debian_13/less versioning=loose
 ENV LESS_VERSION=668-1
 # renovate: datasource=repology depName=debian_13/python3-pydantic versioning=loose
-ENV PYTHON3_PYDANTIC_VERSION=2.10.6-2
+ENV PYTHON3_PYDANTIC_VERSION=1.10.4-1
 # renovate: datasource=repology depName=debian_13/python-cryptography versioning=loose
 ENV PYTHON3_CRYPTOGRAPHY_VERSION=43.0.0-3
 # renovate: datasource=repology depName=debian_13/python3-netifaces versioning=loose
