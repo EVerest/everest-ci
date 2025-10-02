@@ -65,7 +65,7 @@ ENV LIBBOOST_ALL_DEV_VERSION=1.83.0.2+b2
 # renovate: datasource=repology depName=debian_13/libsqlite3-dev versioning=loose
 ENV LIBSQLITE3_DEV_VERSION=3.46.1-7
 # renovate: datasource=repology depName=debian_13/openssl versioning=loose
-ENV LIBSSL_DEV_VERSION=3.5.1-1
+ENV LIBSSL_DEV_VERSION=3.5.1-1+deb13u1
 # renovate: datasource=repology depName=debian_13/nodejs versioning=loose
 ENV LIBNODE_DEV_VERSION=20.19.2+dfsg-1
 # renovate: datasource=repology depName=debian_13/pkg-config versioning=loose

@@ -20,7 +20,7 @@ ENV LIBBOOST_CHRONO1_88_0_VERSION=1.88.0-1
 # renovate: datasource=repology depName=debian_13/boost1.88 versioning=loose
 ENV LIBBOOST_SYSTEM1_88_0_VERSION=1.88.0-1
 # renovate: datasource=repology depName=debian_13/openssl versioning=loose
-ENV LIBSSL3_VERSION=3.5.1-1
+ENV LIBSSL3_VERSION=3.5.1-1+deb13u1
 # renovate: datasource=repology depName=debian_13/curl versioning=loose
 ENV LIBCURL4_VERSION=8.14.1-2
 # renovate: datasource=repology depName=debian_13/libcap2 versioning=loose
