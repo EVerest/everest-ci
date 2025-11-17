@@ -8,8 +8,8 @@
       "description": "Custom manager for Custom Docker GitHub Actions",
       "customType": "regex",
       "datasourceTemplate": "docker",
-      "fileMatch": [
-        "(^|/)action\\.ya?ml$"
+      "managerFilePatterns": [
+        "/(^|/)action\\.ya?ml$/"
       ],
       "matchStrings": [
         "docker://(?<depName>.*?):(?<currentValue>[\\w+\\.\\-]*)"
@@ -18,9 +18,9 @@
     {
       "description": "Custom manager for dependencies in Dockerfiles",
       "customType": "regex",
-      "fileMatch": [
-        "(^|/|\\.)Dockerfile$",
-        "(^|/)Dockerfile\\.[^/]*$"
+      "managerFilePatterns": [
+        "/(^|/|\\.)Dockerfile$/",
+        "/(^|/)Dockerfile\\.[^/]*$/"
       ],
       "matchStrings": [
         "\\s*renovate:\\s*datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\sENV .*?_VERSION=\\\"?(?<currentValue>.*)\\\"?\\s"
@@ -44,7 +44,12 @@
       "matchDatasources": [
         "/^repology$/"
       ],
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
       "automerge": true
     },
     {
@@ -56,7 +61,12 @@
       "matchDatasources": [
         "/^pypi$/"
       ],
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
       "automerge": true
     },
     {
@@ -65,7 +75,12 @@
       "matchManagers": [
         "github-actions"
       ],
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
       "automerge": true
     }
   ]

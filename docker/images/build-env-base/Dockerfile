@@ -64,15 +64,15 @@ ENV LIBBOOST_ALL_DEV_VERSION=1.74.0.3
 # renovate: datasource=repology depName=debian_12/libsqlite3-dev versioning=loose
 ENV LIBSQLITE3_DEV_VERSION=3.40.1-2+deb12u1
 # renovate: datasource=repology depName=debian_12/openssl versioning=loose
-ENV LIBSSL_DEV_VERSION=3.0.15-1~deb12u1
+ENV LIBSSL_DEV_VERSION=3.0.17-1~deb12u1
 # renovate: datasource=repology depName=debian_12/nodejs versioning=loose
 ENV LIBNODE_DEV_VERSION=18.19.0+dfsg-6~deb12u2
 # renovate: datasource=repology depName=debian_12/pkg-config versioning=loose
 ENV PKG_CONFIG_VERSION=1.8.1-1
 # renovate: datasource=repology depName=debian_12/libpcap-dev versioning=loose
 ENV LIBPCAP_DEV_VERSION=1.10.3-1
-# renovate: datasource=repology depName=debian_12/libcap-dev versioning=loose
-ENV LIBCAP_DEV_VERSION=1:2.66-4
+# renovate: datasource=repology depName=debian_12/libcap versioning=loose
+ENV LIBCAP_DEV_VERSION=1:2.66-4+deb12u1
 # renovate: datasource=repology depName=debian_12/python3-venv versioning=loose
 ENV PYTHON3_VENV_VERSION=3.11.2-1+b1
 # renovate: datasource=repology depName=debian_12/python3-build versioning=loose
@@ -120,7 +120,7 @@ RUN python3 -m pip install --break-system-packages \
     sphinxcontrib-svg2pdfconverter==${SPHINXCONTRIB_SVG2PDFCONVERTER_VERSION}
 
 # renovate: datasource=github-releases depName=EVerest/everest-dev-environment versioning=loose
-ENV EDM_VERSION=v0.7.1
+ENV EDM_VERSION=v0.8.0
 
 # Install EVerest dependency manager
 RUN python3 -m pip install --break-system-packages \
@@ -129,7 +129,7 @@ RUN python3 -m pip install --break-system-packages \
 # Install everest-cmake
 ENV EVEREST_CMAKE_PATH=/usr/lib/cmake/everest-cmake
 # renovate: datasource=github-releases depName=EVerest/everest-cmake versioning=loose
-ENV EVEREST_CMAKE_VERSION=v0.5.1
+ENV EVEREST_CMAKE_VERSION=v0.5.4
 RUN git clone https://github.com/EVerest/everest-cmake.git ${EVEREST_CMAKE_PATH} \
     && cd ${EVEREST_CMAKE_PATH} \
     && git checkout ${EVEREST_CMAKE_VERSION} \
@@ -153,3 +153,12 @@ ENV GRPCIO_TOOLS_VERSION=1.71.0
 RUN python3 -m pip install --break-system-packages \
     grpcio==${GRPCIO_VERSION} \
     grpcio-tools==${GRPCIO_TOOLS_VERSION}
+COPY entrypoint.sh /entrypoint.sh
+ARG TARGETARCH
+COPY entrypoint_wrapper.sh /entrypoint_wrapper.sh
+RUN if [ ${TARGETARCH} != "amd64" ]; then \
+        mv /entrypoint.sh /wrapped_entrypoint.sh; \
+        cp /entrypoint_wrapper.sh /entrypoint.sh; \
+    fi; \
+    rm /entrypoint_wrapper.sh
+ENTRYPOINT [ "/entrypoint.sh" ]
