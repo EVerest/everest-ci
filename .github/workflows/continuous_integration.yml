@@ -199,13 +199,13 @@ jobs:
     if: ${{ inputs.run_lint == 'true' }}
     steps:
       - name: Checkout local github actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: everest/everest-ci
           ref: ${{ needs.setup-env.outputs.sha_everest_ci }}
           path: everest-ci
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: source
       - name: Run clang-format
@@ -302,7 +302,7 @@ jobs:
       build_kit_image_tag: ${{ steps.set-outputs.outputs.tag }}
     steps:
       - name: Checkout Dockerfile
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ${{ github.repository }}
           path: source
@@ -329,7 +329,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=docker,dest=build-kit.tar
       - name: Upload build-kit image
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: build-kit
           path: build-kit.tar
@@ -375,7 +375,7 @@ jobs:
           fi
           ssh-add ~/.ssh/id_ed25519
       - name: Checkout local github actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: everest/everest-ci
           ref: ${{ needs.setup-env.outputs.sha_everest_ci }}
@@ -395,7 +395,7 @@ jobs:
             compile-${{ env.branch_name_for_cache }}-
             compile-
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: source
       - name: Setup run scripts
@@ -403,7 +403,7 @@ jobs:
           mkdir scripts
           rsync -a source/${{ inputs.build_kit_scripts_directory }}/ scripts
       - name: Download build-kit image
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: build-kit
       - name: Load build-kit image
@@ -430,7 +430,7 @@ jobs:
           build-kit run-script run_unit_tests
       - name: Archive test results
         if: ${{ always() && (steps.run_unit_tests.outcome == 'success' || steps.run_unit_tests.outcome == 'failure') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           if-no-files-found: error
           name: ctest-report
@@ -447,14 +447,14 @@ jobs:
           build-kit run-script run_coverage
       - name: Archive coverage report
         if: ${{ always() && (steps.run_coverage.outcome == 'success' || steps.run_coverage.outcome == 'failure') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           if-no-files-found: error
           name: coverage-report
           path: ${{ inputs.coverage_report_path }}
       - name: Archive coverage xml
         if: ${{ always() && (steps.run_coverage.outcome == 'success' || steps.run_coverage.outcome == 'failure') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           if-no-files-found: error
           name: coverage-xml
@@ -488,7 +488,7 @@ jobs:
           tar -czf dist.tar.gz dist
       - name: Upload dist artifact
         if: ${{ always() && (steps.create_dist.outcome == 'success' || steps.create_dist.outcome == 'failure') }}
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v5.0.0
         with:
           if-no-files-found: error
           path: dist.tar.gz
@@ -505,7 +505,7 @@ jobs:
           build-kit run-script install_wheels
       - name: Upload wheels artifact
         if: ${{ always() && (steps.create_wheels.outcome == 'success' || steps.create_wheels.outcome == 'failure') }}
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v5.0.0
         with:
           if-no-files-found: error
           path: ${{ inputs.wheels_path }}
@@ -522,7 +522,7 @@ jobs:
     if: ${{ inputs.run_integration_tests == 'true' }}
     steps:
       - name: Download dist dir
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v6.0.0
         with:
           name: dist
       - name: Extract dist.tar.gz
@@ -530,12 +530,12 @@ jobs:
           tar -xzf ${{ github.workspace }}/dist.tar.gz -C ${{ github.workspace }}
       - name: Download wheels
         if: ${{ inputs.run_install_wheels == 'true' }}
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v6.0.0
         with:
           name: wheels
           path: wheels
       - name: Checkout repository
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v6.0.1
         with:
           path: source
       - name: Setup run scripts
@@ -543,7 +543,7 @@ jobs:
           mkdir scripts
           rsync -a source/${{ inputs.build_kit_scripts_directory }}/ scripts
       - name: Download build-kit image
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: build-kit
       - name: Load build-kit image
@@ -567,7 +567,7 @@ jobs:
           run-script run_integration_tests
       - name: Upload result and report as artifact
         if: ${{ always() && (steps.run_integration_tests.outcome == 'success' || steps.run_integration_tests.outcome == 'failure') }}
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v5.0.0
         with:
           if-no-files-found: error
           name: integration-test-report
@@ -592,13 +592,13 @@ jobs:
     if: ${{ inputs.run_coverage && inputs.do_not_run_coverage_badge_creation == 'false' && inputs.run_coverage == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout local github actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: everest/everest-ci
           ref: ${{ needs.setup-env.outputs.sha_everest_ci }}
           path: everest-ci
       - name: Download xml coverage report
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v6.0.0
         with:
           if-no-files-found: error
           name: coverage-xml
@@ -630,7 +630,7 @@ jobs:
           artifact_directory: ${{ github.workspace }}/coverage-badge/
           deploy_global_artifact: true
       - name: Download html coverage report
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v6.0.0
         with:
           if-no-files-found: error
           name: coverage-report
