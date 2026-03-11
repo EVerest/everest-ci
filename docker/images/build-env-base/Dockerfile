@@ -8,6 +8,8 @@ ENV GIT_VERSION=1:2.39.5-0+deb12u2
 ENV CURL_VERSION=7.88.1-10+deb12u14
 # renovate: datasource=repology depName=debian_12/rsync versioning=loose
 ENV RSYNC_VERSION=3.2.7-1+deb12u2
+# renovate: datasource=repology depName=debian_12/iproute2 versioning=loose
+ENV IPROUTE2_VERSION=6.1.0-3
 # renovate: datasource=repology depName=debian_12/ninja-build versioning=loose
 ENV NINJA_BUILD_VERSION=1.11.1-2~deb12u1
 # renovate: datasource=repology depName=debian_12/make-dfsg versioning=loose
@@ -37,6 +39,7 @@ RUN apt update \
     git=${GIT_VERSION} \
     curl=${CURL_VERSION} \
     rsync=${RSYNC_VERSION} \
+    iproute2=${IPROUTE2_VERSION} \
     # build tools
     ninja-build=${NINJA_BUILD_VERSION} \
     make=${MAKE_VERSION} \
