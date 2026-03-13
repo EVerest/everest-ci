@@ -55,10 +55,11 @@ jobs:
     uses: ./.github/workflows/deploy-single-docker-image.yml
     permissions:
       contents: read
+      packages: write
     secrets:
       GITHUB_REPOSITORY_PAT: ${{ secrets.GITHUB_TOKEN }}
-      DOCKER_REGISTRY_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
-      DOCKER_REGISTRY_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
+      DOCKER_REGISTRY_PAT: ${{ secrets.GITHUB_TOKEN }}
     with:
       force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' }}
       image_name: ${{ needs.env-setup.outputs.repository_name }}/run-env-base
