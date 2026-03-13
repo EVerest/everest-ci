@@ -53,8 +53,10 @@ jobs:
       - env-setup
     name: Build and push run-env-base docker image
     uses: ./.github/workflows/deploy-single-docker-image.yml
+    permissions:
+      contents: read
     secrets:
-      GITHUB_REPOSITORY_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      GITHUB_REPOSITORY_PAT: ${{ secrets.GITHUB_TOKEN }}
       DOCKER_REGISTRY_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
       DOCKER_REGISTRY_PAT: ${{ secrets.SA_GITHUB_PAT }}
     with:
