@@ -11,6 +11,9 @@ RUN git config --global --add safe.directory '*'
 
 WORKDIR $WORKSPACE_PATH
 
+COPY ../../../applications/utils/scripts/package_version_logger.py /usr/local/bin/package_version_logger.py
+RUN package_version_logger.py --output-file /package_inventory.json
+
 COPY entrypoint.sh /entrypoint.sh
 ARG TARGETARCH
 COPY entrypoint_wrapper.sh /entrypoint_wrapper.sh
