@@ -123,7 +123,7 @@ RUN python3 -m pip install --break-system-packages \
     sphinxcontrib-svg2pdfconverter==${SPHINXCONTRIB_SVG2PDFCONVERTER_VERSION}
 
 # renovate: datasource=github-releases depName=EVerest/everest-dev-environment versioning=loose
-ENV EDM_VERSION=v0.8.0
+ENV EDM_VERSION=v0.8.1
 
 # Install EVerest dependency manager
 RUN python3 -m pip install --break-system-packages \
