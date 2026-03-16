@@ -73,6 +73,14 @@ RUN python3 -m pip install --break-system-packages \
     py4j==${PY4J_VERSION} \
     aiofile==${AIOFILE_VERSION}
 
+ENV GO_VERSION=1.24.2
+ADD https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz /tmp/go.tar.gz
+RUN if [ -d /usr/local/go ]; then \
+        echo "Go is already installed"; \
+    else \
+        tar -C /usr/local -xzf /tmp/go.tar.gz; \
+    fi
+ENV PATH="/usr/local/go/bin:${PATH}"
 COPY entrypoint.sh /entrypoint.sh
 ARG TARGETARCH
 COPY entrypoint_wrapper.sh /entrypoint_wrapper.sh
