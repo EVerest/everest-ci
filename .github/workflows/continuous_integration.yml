@@ -535,7 +535,7 @@ jobs:
           name: wheels
           path: wheels
       - name: Checkout repository
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
         with:
           path: source
       - name: Setup run scripts
@@ -576,7 +576,7 @@ jobs:
             ${{ inputs.report_html_path }}
       - name: Render result
         if: ${{ always() && (steps.run_integration_tests.outcome == 'success' || steps.run_integration_tests.outcome == 'failure') }}
-        uses: pmeier/pytest-results-action@v0.7.2
+        uses: pmeier/pytest-results-action@v0.8.0
         with:
           path: ${{ inputs.result_xml_path }}
           summary: True
