@@ -53,10 +53,13 @@ jobs:
       - env-setup
     name: Build and push run-env-base docker image
     uses: ./.github/workflows/deploy-single-docker-image.yml
+    permissions:
+      contents: read
+      packages: write
     secrets:
-      GITHUB_REPOSITORY_PAT: ${{ secrets.SA_GITHUB_PAT }}
-      DOCKER_REGISTRY_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
-      DOCKER_REGISTRY_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      GITHUB_REPOSITORY_PAT: ${{ secrets.GITHUB_TOKEN }}
+      DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
+      DOCKER_REGISTRY_PAT: ${{ secrets.GITHUB_TOKEN }}
     with:
       force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' }}
       image_name: ${{ needs.env-setup.outputs.repository_name }}/run-env-base
@@ -74,10 +77,13 @@ jobs:
       - run-env-base
     name: Build and push build-env-base docker image
     uses: ./.github/workflows/deploy-single-docker-image.yml
+    permissions:
+      contents: read
+      packages: write
     secrets:
-      GITHUB_REPOSITORY_PAT: ${{ secrets.SA_GITHUB_PAT }}
-      DOCKER_REGISTRY_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
-      DOCKER_REGISTRY_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      GITHUB_REPOSITORY_PAT: ${{ secrets.GITHUB_TOKEN }}
+      DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
+      DOCKER_REGISTRY_PAT: ${{ secrets.GITHUB_TOKEN }}
     with:
       force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' || needs.run-env-base.outputs.rebuild == 'true' }}
       image_name: ${{ needs.env-setup.outputs.repository_name }}/build-env-base
@@ -98,10 +104,13 @@ jobs:
       - build-env-base
     name: Build and push dev-env-base docker image
     uses: ./.github/workflows/deploy-single-docker-image.yml
+    permissions:
+      contents: read
+      packages: write
     secrets:
-      GITHUB_REPOSITORY_PAT: ${{ secrets.SA_GITHUB_PAT }}
-      DOCKER_REGISTRY_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
-      DOCKER_REGISTRY_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      GITHUB_REPOSITORY_PAT: ${{ secrets.GITHUB_TOKEN }}
+      DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
+      DOCKER_REGISTRY_PAT: ${{ secrets.GITHUB_TOKEN }}
     with:
       force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' || needs.build-env-base.outputs.rebuild == 'true' }}
       image_name: ${{ needs.env-setup.outputs.repository_name }}/dev-env-base
@@ -121,10 +130,13 @@ jobs:
       - build-env-base
     name: Build and push build-kit docker image
     uses: ./.github/workflows/deploy-single-docker-image.yml
+    permissions:
+      contents: read
+      packages: write
     secrets:
-      GITHUB_REPOSITORY_PAT: ${{ secrets.SA_GITHUB_PAT }}
-      DOCKER_REGISTRY_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
-      DOCKER_REGISTRY_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      GITHUB_REPOSITORY_PAT: ${{ secrets.GITHUB_TOKEN }}
+      DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
+      DOCKER_REGISTRY_PAT: ${{ secrets.GITHUB_TOKEN }}
     with:
       force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' || needs.build-env-base.outputs.rebuild == 'true' }}
       image_name: ${{ needs.env-setup.outputs.repository_name }}/build-kit-base
@@ -145,10 +157,13 @@ jobs:
       - env-setup
     name: Build and push deprecated everest-clang-format docker image
     uses: ./.github/workflows/deploy-single-docker-image.yml
+    permissions:
+      contents: read
+      packages: write
     secrets:
-      GITHUB_REPOSITORY_PAT: ${{ secrets.SA_GITHUB_PAT }}
-      DOCKER_REGISTRY_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
-      DOCKER_REGISTRY_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      GITHUB_REPOSITORY_PAT: ${{ secrets.GITHUB_TOKEN }}
+      DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
+      DOCKER_REGISTRY_PAT: ${{ secrets.GITHUB_TOKEN }}
     with:
       force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' }}
       image_name: everest-clang-format
@@ -166,10 +181,13 @@ jobs:
       - env-setup
     name: Build and push deprecated build-kit-alpine docker image
     uses: ./.github/workflows/deploy-single-docker-image.yml
+    permissions:
+      contents: read
+      packages: write
     secrets:
-      GITHUB_REPOSITORY_PAT: ${{ secrets.SA_GITHUB_PAT }}
-      DOCKER_REGISTRY_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
-      DOCKER_REGISTRY_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      GITHUB_REPOSITORY_PAT: ${{ secrets.GITHUB_TOKEN }}
+      DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
+      DOCKER_REGISTRY_PAT: ${{ secrets.GITHUB_TOKEN }}
     with:
       force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' }}
       image_name: build-kit-alpine
@@ -188,10 +206,13 @@ jobs:
       - env-setup
     name: Build and push deprecated build-kit-debian docker image
     uses: ./.github/workflows/deploy-single-docker-image.yml
+    permissions:
+      contents: read
+      packages: write
     secrets:
-      GITHUB_REPOSITORY_PAT: ${{ secrets.SA_GITHUB_PAT }}
-      DOCKER_REGISTRY_USERNAME: ${{ secrets.SA_GITHUB_USERNAME }}
-      DOCKER_REGISTRY_PAT: ${{ secrets.SA_GITHUB_PAT }}
+      GITHUB_REPOSITORY_PAT: ${{ secrets.GITHUB_TOKEN }}
+      DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
+      DOCKER_REGISTRY_PAT: ${{ secrets.GITHUB_TOKEN }}
     with:
       force_rebuild: ${{ needs.env-setup.outputs.force_rebuild == 'true' }}
       image_name: build-kit-debian
