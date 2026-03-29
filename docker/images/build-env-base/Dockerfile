@@ -113,7 +113,7 @@ ENV GCOVR_VERSION=8.2
 # renovate: datasource=pypi depName=sphinxcontrib-contentui
 ENV SPHINXCONTRIB_CONTENTUI_VERSION=0.2.5
 # renovate: datasource=pypi depName=sphinxcontrib-svg2pdfconverter
-ENV SPHINXCONTRIB_SVG2PDFCONVERTER_VERSION=2.0.0
+ENV SPHINXCONTRIB_SVG2PDFCONVERTER_VERSION=2.1.0
 
 # Install additional Python packages
 RUN python3 -m pip install --break-system-packages \
