@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1
 ARG BASE_IMAGE_TAG=latest
-FROM ghcr.io/everest/everest-ci/run-env-base:${BASE_IMAGE_TAG}
+ARG BASE_IMAGE_REGISTRY=ghcr.io/everest/everest-ci
+FROM ${BASE_IMAGE_REGISTRY}/run-env-base:${BASE_IMAGE_TAG}
 
 # renovate: datasource=repology depName=debian_12/git versioning=loose
 ENV GIT_VERSION=1:2.39.5-0+deb12u3
@@ -67,9 +68,9 @@ ENV LIBBOOST_ALL_DEV_VERSION=1.74.0.3
 # renovate: datasource=repology depName=debian_12/libsqlite3-dev versioning=loose
 ENV LIBSQLITE3_DEV_VERSION=3.40.1-2+deb12u2
 # renovate: datasource=repology depName=debian_12/openssl versioning=loose
-ENV LIBSSL_DEV_VERSION=3.0.18-1~deb12u2
+ENV LIBSSL_DEV_VERSION=3.0.19-1~deb12u2
 # renovate: datasource=repology depName=debian_12/nodejs versioning=loose
-ENV LIBNODE_DEV_VERSION=18.20.4+dfsg-1~deb12u1
+ENV LIBNODE_DEV_VERSION=18.20.4+dfsg-1~deb12u2
 # renovate: datasource=repology depName=debian_12/pkg-config versioning=loose
 ENV PKG_CONFIG_VERSION=1.8.1-1
 # renovate: datasource=repology depName=debian_12/libpcap-dev versioning=loose

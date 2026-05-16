@@ -17,12 +17,17 @@ on:
     tags:
       - 'v*'
 
+concurrency:
+  group: deploy-docker-images-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   REGISTRY: ghcr.io
   DOCKER_DIRECTORY: docker/images
   PLATFORMS: |
     linux/amd64
     linux/arm64
+    linux/arm/v7
   PATH_TO_DEPLOY_SINGLE_DOCKER_IMAGE_WORKFLOW: .github/workflows/deploy-single-docker-image.yml
   PATH_TO_DEPLOY_DOCKER_IMAGES_WORKFLOW: .github/workflows/deploy-docker-images.yml
 
@@ -97,7 +102,7 @@ jobs:
         ${{ needs.env-setup.outputs.path_to_deploy_docker_images_workflow }}
       build_args: |
         BASE_IMAGE_TAG=${{ needs.run-env-base.outputs.one_image_tag_short }}
-        
+        BASE_IMAGE_REGISTRY=${{ needs.env-setup.outputs.docker_registry }}/${{ github.repository_owner }}/${{ needs.env-setup.outputs.repository_name }}
   dev-env-base:
     needs:
       - env-setup
@@ -124,6 +129,7 @@ jobs:
         ${{ needs.env-setup.outputs.path_to_deploy_docker_images_workflow }}
       build_args: |
         BASE_IMAGE_TAG=${{ needs.build-env-base.outputs.one_image_tag_short }}
+        BASE_IMAGE_REGISTRY=${{ needs.env-setup.outputs.docker_registry }}/${{ github.repository_owner }}/${{ needs.env-setup.outputs.repository_name }}
   build-kit-base:
     needs:
       - env-setup
@@ -150,6 +156,7 @@ jobs:
         ${{ needs.env-setup.outputs.path_to_deploy_docker_images_workflow }}
       build_args: |
         BASE_IMAGE_TAG=${{ needs.build-env-base.outputs.one_image_tag_short }}
+        BASE_IMAGE_REGISTRY=${{ needs.env-setup.outputs.docker_registry }}/${{ github.repository_owner }}/${{ needs.env-setup.outputs.repository_name }}
   # Include deprecated images for backwards compatibility
   deprecated-everest-clang-format:
     if: ${{ needs.env-setup.outputs.build_deprecated_images == 'true' }}
