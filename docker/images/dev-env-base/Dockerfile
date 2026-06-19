@@ -67,11 +67,11 @@ ENV CA_CERTIFICATES_VERSION=20230311+deb12u1
 ENV CURL_VERSION=7.88.1-10+deb12u14
 
 # Not managed by renovate, because no available datasource
-ENV DOCKER_CE_VERSION=5:27.0.3-1~debian.12~bookworm
-ENV DOCKER_CE_CLI_VERSION=5:27.1.1-1~debian.12~bookworm
-ENV CONTAINERD_IO_VERSION=1.7.19-1
-ENV DOCKER_BUILDX_PLUGIN_VERSION=0.16.1-1~debian.12~bookworm
-ENV DOCKER_COMPOSE_PLUGIN_VERSION=2.29.1-1~debian.12~bookworm
+ENV DOCKER_CE_VERSION=5:29.5.0-1~debian.12~bookworm
+ENV DOCKER_CE_CLI_VERSION=5:29.5.0-1~debian.12~bookworm
+ENV CONTAINERD_IO_VERSION=2.2.3-1~debian.12~bookworm
+ENV DOCKER_BUILDX_PLUGIN_VERSION=0.34.0-1~debian.12~bookworm
+ENV DOCKER_COMPOSE_PLUGIN_VERSION=5.1.3-1~debian.12~bookworm
 
 # Development Tools - Docker
 RUN apt update \
