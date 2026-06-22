@@ -62,11 +62,11 @@ RUN apt update \
     && rm -rf /var/lib/apt/lists/*
 
 # renovate: datasource=pypi depName=environs
-ENV ENVIRONS_VERSION=14.5.0
+ENV ENVIRONS_VERSION=14.6.0
 # renovate: datasource=pypi depName=py4j
 ENV PY4J_VERSION=0.10.9.7
 # renovate: datasource=pypi depName=aiofile
-ENV AIOFILE_VERSION=3.9.0
+ENV AIOFILE_VERSION=3.11.1
 
 RUN python3 -m pip install --break-system-packages \
     environs==${ENVIRONS_VERSION} \
