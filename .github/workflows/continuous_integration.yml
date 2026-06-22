@@ -387,7 +387,7 @@ jobs:
           echo "branch_name_for_cache=${BRANCH_NAME_FOR_CACHE}" >> "$GITHUB_ENV"
       - name: Setup cache
         if: ${{ inputs.use_build_cache == 'true' }}
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: cache
           key: compile-${{ env.branch_name_for_cache }}-${{ github.sha }}
